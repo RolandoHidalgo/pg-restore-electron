@@ -51,7 +51,7 @@
         cols="12"
       >
         <h2 class="headline font-weight-bold mb-3">
-          Important Links asdasdasd
+          Important Links dddgfggggggggggg
         </h2>
 
         <v-row justify="center">
