@@ -2,7 +2,7 @@
 
 import {app, protocol, BrowserWindow, ipcMain} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
-import installExtension, {VUEJS_DEVTOOLS} from 'electron-devtools-installer'
+import installExtension from 'electron-devtools-installer'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 import path from 'path';
@@ -60,14 +60,14 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
-    if (isDevelopment && !process.env.IS_TEST) {
-        // Install Vue Devtools
-        try {
-            await installExtension(VUEJS_DEVTOOLS)
-        } catch (e) {
-            console.error('Vue Devtools failed to install:', e.toString())
-        }
-    }
+    // if (isDevelopment && !process.env.IS_TEST) {
+    //     // Install Vue Devtools
+    //     try {
+    //         await installExtension(VUEJS_DEVTOOLS)
+    //     } catch (e) {
+    //         console.error('Vue Devtools failed to install:', e.toString())
+    //     }
+    // }
     ipcMain.on('restore-db', (event, dbOptions) => {
         restoreDb(dbOptions,event);
 
