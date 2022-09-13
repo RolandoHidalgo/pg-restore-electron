@@ -24,24 +24,24 @@ const restoreDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
     console.log(dbOptions);
     const bat = spawn(pgRestoreBinary, params.toString().split(" "), {env: {...process.env, PGPASSWORD: password}});
 
-
+    bat.stdout.setEncoding('utf8');
     bat.stdout.on('data', (data: any) => {
-        console.log(data.toString());
-        event.sender.send('restore-console',data.toString())
+        console.log('data', data.toString());
+        event.sender.send('restore-logs', data.toString())
     });
-
+    bat.stderr.setEncoding('utf8');
     bat.stderr.on('data', (data: any) => {
-        console.error(data.toString());
-        event.sender.send('restore-console',data.toString())
+        console.log('error', data.toString());
+        event.sender.send('restore-logs', data.toString())
     });
 
     bat.on('exit', (code: any) => {
         console.log(`Child exited with code ${code}`);
-        event.sender.send('restore-console',`Child exited with code ${code}`)
+        //event.sender.send('restore-console',`Child exited with code ${code}`)
     });
     bat.on('error', (code: any) => {
         console.log(`error ${code}`);
-        event.sender.send('restore-console',`error ${code}`)
+        event.sender.send('restore-logs', `error ${code}`)
     });
 };
 

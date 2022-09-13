@@ -8,17 +8,31 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 import path from 'path';
 import {restoreDb} from "@/core/utils/restore/restore-db";
 
+
+
+// setup the titlebar main process
+
+
+
 console.log(path.join(__dirname, 'preload.js'), '###################');
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
     {scheme: 'app', privileges: {secure: true, standard: true}}
 ])
 
+
+
 async function createWindow() {
     // Create the browser window.
     const win = new BrowserWindow({
         width: 800,
         height: 600,
+        autoHideMenuBar:true,
+        titleBarStyle: 'hidden',
+        titleBarOverlay: {
+            color: '#2f3241',
+            symbolColor: '#74b1be'
+        },
         webPreferences: {
 
             // Use pluginOptions.nodeIntegration, leave this alone
@@ -29,6 +43,8 @@ async function createWindow() {
             contextIsolation: true
         }
     })
+
+
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode

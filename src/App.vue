@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <v-main>
+        <v-main class="pa-3">
             <restore-form></restore-form>
         </v-main>
     </v-app>

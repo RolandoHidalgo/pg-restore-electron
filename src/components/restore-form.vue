@@ -1,48 +1,72 @@
 <template>
     <main-content>
         <v-form>
-            <div>
-                <v-select
-                        :items="items"
-                        label="Postgres version"
-                        outlined
-                        v-model="restoreData.binary"
-                        item-value="binary"
-                ></v-select>
-                <v-text-field
-                        label="Data Base"
-                        outlined
-                        v-model="restoreData.dbName"
-                ></v-text-field>
-                <v-text-field
-                        label="User"
-                        outlined
-                        v-model="restoreData.user"
-                ></v-text-field>
+            <v-row dense>
+                <v-col cols="3">
+                    <v-select
+                            dense
+                            :items="items"
+                            label="Postgres version"
+                            outlined
+                            v-model="restoreData.binary"
+                            item-value="binary"
+                    ></v-select>
+                </v-col>
+                <v-col cols="3">
+                    <v-text-field
+                            dense
+                            label="Data Base"
+                            outlined
+                            v-model="restoreData.dbName"
+                    ></v-text-field>
+                </v-col>
+                <v-col cols="3">
+                    <v-text-field
+                            dense
+                            label="User"
+                            outlined
+                            v-model="restoreData.user"
+                    ></v-text-field>
+                </v-col>
+                <v-col cols="3">
+                    <v-text-field
+                            dense
+                            label="Password"
+                            outlined
+                            v-model="restoreData.password"
+                    ></v-text-field>
+                </v-col>
+                <v-col cols="3">
+                    <v-text-field
+                            dense
+                            label="Host"
+                            outlined
+                            v-model="restoreData.host"
+                    ></v-text-field>
+                </v-col>
+                <v-col cols="2">
+                    <v-text-field
+                            dense
+                            label="Port"
+                            outlined
+                            v-model="restoreData.port"
+                    ></v-text-field>
+                </v-col>
+                <v-col cols="5">
+                    <v-file-input
+                            dense
+                            label="Select backup"
+                            outlined
+                            @change="selectedFile"
+                            prepend-icon=""
+                            prepend-inner-icon="$file"
+                    ></v-file-input>
+                </v-col>
+            </v-row>
 
-                <v-text-field
-                        label="Password"
-                        outlined
-                        v-model="restoreData.password"
-                ></v-text-field>
-                <v-text-field
-                        label="Host"
-                        outlined
-                        v-model="restoreData.host"
-                ></v-text-field>
-                <v-text-field
-                        label="Port"
-                        outlined
-                        v-model="restoreData.port"
-                ></v-text-field>
-                <v-file-input
-                        label="Select backup"
-                        outlined
-                        @change="selectedFile"
-                ></v-file-input>
-                <v-btn color="primary" @click="click">restore</v-btn>
 
-            </div>
+            <v-btn color="primary" @click="click">restore</v-btn>
+
             <div>
                 <restore-console></restore-console>
             </div>
