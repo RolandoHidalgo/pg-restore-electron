@@ -91,14 +91,15 @@ app.on('ready', async () => {
         restoreDb(dbOptions, event);
 
     });
+
+
     ipcMain.handle('file-args', (event, dbOptions) => {
-        console.log(process.argv);
-        console.log(gffo);
+
         const backupFile = process.argv.filter(e => {
             return e.toString().includes('.backup');
         });
         console.log(backupFile[0]);
-        return backupFile.length > 0 ? new gffo.LocalFileData(backupFile[0]) : null;
+        return backupFile.length > 0 ? backupFile[0] : null;
 
 
     });

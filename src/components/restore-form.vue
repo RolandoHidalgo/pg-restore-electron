@@ -84,14 +84,14 @@ export default {
   components: {RestoreConsole, MainContent},
   beforeMount() {
     this.$electron.getFileArg().then(data => {
-      window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-      window.directoryEntry = window.directoryEntry || window.webkitDirectoryEntry;
-      const file = new File(data.arrayBuffer, data.name, {
-        type: data.type,
-        path:'asdasd'
-      });
-      this.file = file;
-      console.log(file);
+      if (data !== null) {
+        const file = new File([], data, {
+          type: data.type
+        });
+        this.file = file;
+        this.restoreData.backupPath = data;
+      }
+
 
     })
 

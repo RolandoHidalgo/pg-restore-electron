@@ -19,10 +19,9 @@ const restoreDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
     const pgRestoreBinary = `C:\\Program Files (x86)\\PostgreSQL\\10\\bin\\pg_restore.exe`;
     const params = `--host ${host} --port ${port} --username ${user} --role postgres --dbname ${dbName} --verbose ${backupPath}`;
 
-    console.log(binary);
-    console.log(pgRestoreBinary);
-    console.log(dbOptions);
-    const bat = spawn(pgRestoreBinary, params.toString().split(" "), {env: {...process.env, PGPASSWORD: password}});
+    console.log(binary,'xdxd');
+
+    const bat = spawn(binary, params.toString().split(" "), {env: {...process.env, PGPASSWORD: password}});
 
     bat.stdout.setEncoding('utf8');
     bat.stdout.on('data', (data: any) => {
