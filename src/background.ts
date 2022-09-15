@@ -8,10 +8,14 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 import path from 'path';
 import {restoreDb} from "@/core/utils/restore/restore-db";
 
+const {handleSquirell} = require('./core/utils/restore/regeditUtils');
+handleSquirell(app);
 
+const squirell = () => {
+    if (require('electron-squirrel-startup')) return;
+};
 
 // setup the titlebar main process
-
 
 
 console.log(path.join(__dirname, 'preload.js'), '###################');
@@ -21,18 +25,12 @@ protocol.registerSchemesAsPrivileged([
 ])
 
 
-
 async function createWindow() {
     // Create the browser window.
     const win = new BrowserWindow({
         width: 800,
         height: 600,
-        autoHideMenuBar:true,
-        titleBarStyle: 'hidden',
-        titleBarOverlay: {
-            color: '#2f3241',
-            symbolColor: '#74b1be'
-        },
+        autoHideMenuBar: true,
         webPreferences: {
 
             // Use pluginOptions.nodeIntegration, leave this alone
@@ -43,7 +41,6 @@ async function createWindow() {
             contextIsolation: true
         }
     })
-
 
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -85,7 +82,7 @@ app.on('ready', async () => {
     //     }
     // }
     ipcMain.on('restore-db', (event, dbOptions) => {
-        restoreDb(dbOptions,event);
+        restoreDb(dbOptions, event);
 
     });
     createWindow()

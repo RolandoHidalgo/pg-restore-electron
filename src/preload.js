@@ -9,6 +9,10 @@ contextBridge.exposeInMainWorld('versions', {
     restoreDb: (dbOptions) => ipcRenderer.send('restore-db', dbOptions),
     handleRestoreConsoleEvent: (callback) => ipcRenderer.on('restore-logs', callback),
     getBinaries: () => binaryUtils(),
+    getFileArg:()=>{
+        console.log(process.argv,'el args');
+        console.log(process,'el process');
+    },
     electronAll: () => {
 
         return {

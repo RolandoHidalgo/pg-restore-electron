@@ -60,6 +60,7 @@
                             @change="selectedFile"
                             prepend-icon=""
                             prepend-inner-icon="$file"
+                            v-model="file"
                     ></v-file-input>
                 </v-col>
             </v-row>
@@ -81,9 +82,12 @@
     export default {
         name: "restore-form",
         components: {RestoreConsole, MainContent},
+        mounted() {
+            console.log(this.$electron.getFileArg());
+        },
         data() {
             return {
-                file: '',
+                file: null,
                 restoreData: {
                     dbName: '',
                     port: '5432',
