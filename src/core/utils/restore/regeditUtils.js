@@ -15,13 +15,14 @@ new ProgId({
 new ProgId({
     description: 'My Application File pepe',
     friendlyAppName: true,
-    extensions: ['pepe'],
-    progExt: 'pg-restore.pepe',
-    shell: [
-        new ShellOption({verb: ShellOption.OPEN}),
-        new ShellOption({verb: ShellOption.EDIT, args: ['--edit']}),
-        new ShellOption({verb: 'customaction', args: ['--custom'], action: 'Awesome Action'})
-    ]
+    extensions: ['pepe']
+});
+
+new ProgId({
+    description: 'My Application File otro',
+    friendlyAppName: true,
+    squirrel:true,
+    extensions: ['otro']
 });
 
 
@@ -36,11 +37,11 @@ const squirrelStartupEvent = (app) => {
         case '--squirrel-updated':
             console.log('instalando el puto squirell');
             console.log(Regedit.progIds, 'los idssss');
-            Regedit.installAll().finally(() => app.quit());
+            Regedit.installAll();
             return true;
         case '--squirrel-uninstall':
 
-            Regedit.uninstallAll().finally(() => app.quit());
+            Regedit.uninstallAll();
             return true;
 
         case '--squirrel-obsolete':
@@ -54,7 +55,7 @@ module.exports = {
         const handle = squirrelStartupEvent();
         console.log(handle, "handleee###############");
         if (handle) {
-            app.quit();
+            //app.quit();
         }
 
     }
