@@ -5,7 +5,6 @@ new ProgId({
     description: 'My Application File pepe',
     friendlyAppName: true,
     extensions: ['backup'],
-    progExt: 'pg-restore.backup',
     shell: [
         new ShellOption({verb: ShellOption.OPEN}),
         new ShellOption({verb: ShellOption.EDIT, args: ['--edit']}),
@@ -16,13 +15,6 @@ new ProgId({
     description: 'My Application File pepe',
     friendlyAppName: true,
     extensions: ['pepe']
-});
-
-new ProgId({
-    description: 'My Application File otro',
-    friendlyAppName: true,
-    squirrel:true,
-    extensions: ['otro']
 });
 
 

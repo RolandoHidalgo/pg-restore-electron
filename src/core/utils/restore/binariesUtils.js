@@ -21,6 +21,7 @@ const getVersions = (basePath) => {
 };
 
 const findBinarys = () => {
+    console.log("el process desde el binary",process.argv);
     return  basePathsArch.map(e => getVersions(e)).flat();
 
 

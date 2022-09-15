@@ -1,8 +1,11 @@
 'use strict'
+import {GlobalConfig} from "@/core/utils/restore/GlobalConfig";
 
+GlobalConfig.getInstance().setConfig('pepe');
 import {app, protocol, BrowserWindow, ipcMain} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension from 'electron-devtools-installer'
+import gffo from 'get-file-object-from-local-path';
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 import path from 'path';
@@ -10,6 +13,8 @@ import {restoreDb} from "@/core/utils/restore/restore-db";
 
 const {handleSquirell} = require('./core/utils/restore/regeditUtils');
 handleSquirell(app);
+console.log(process.argv, 'el args');
+
 
 const squirell = () => {
     if (require('electron-squirrel-startup')) return;
@@ -18,7 +23,7 @@ const squirell = () => {
 // setup the titlebar main process
 
 
-console.log(path.join(__dirname, 'preload.js'), '###################');
+console.log(GlobalConfig.getInstance().getConfiguration(), '###################');
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
     {scheme: 'app', privileges: {secure: true, standard: true}}
@@ -41,6 +46,7 @@ async function createWindow() {
             contextIsolation: true
         }
     })
+
 
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -85,6 +91,18 @@ app.on('ready', async () => {
         restoreDb(dbOptions, event);
 
     });
+    ipcMain.handle('file-args', (event, dbOptions) => {
+        console.log(process.argv);
+        console.log(gffo);
+        const backupFile = process.argv.filter(e => {
+            return e.toString().includes('.backup');
+        });
+        console.log(backupFile[0]);
+        return backupFile.length > 0 ? new gffo.LocalFileData(backupFile[0]) : null;
+
+
+    });
+
     createWindow()
 })
 

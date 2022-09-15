@@ -1,7 +1,8 @@
 import electron from 'electron';
 import binaryUtils from './core/utils/restore/binariesUtils';
+import {GlobalConfig} from "@/core/utils/restore/GlobalConfig";
 
-const {contextBridge, ipcRenderer} = electron;
+const {contextBridge, ipcRenderer,app} = electron;
 
 
 
@@ -10,8 +11,8 @@ contextBridge.exposeInMainWorld('versions', {
     handleRestoreConsoleEvent: (callback) => ipcRenderer.on('restore-logs', callback),
     getBinaries: () => binaryUtils(),
     getFileArg:()=>{
-        console.log(process.argv,'el args');
-        console.log(process,'el process');
+
+        return ipcRenderer.invoke('file-args');
     },
     electronAll: () => {
 
