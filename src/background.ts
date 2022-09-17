@@ -11,19 +11,18 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 import path from 'path';
 import {restoreDb} from "@/core/utils/restore/restore-db";
 
+
+
 const {handleSquirell} = require('./core/utils/restore/regeditUtils');
 handleSquirell(app);
 console.log(process.argv, 'el args');
 
 
-const squirell = () => {
-    if (require('electron-squirrel-startup')) return;
-};
 
 // setup the titlebar main process
 
 
-console.log(GlobalConfig.getInstance().getConfiguration(), '###################');
+
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
     {scheme: 'app', privileges: {secure: true, standard: true}}

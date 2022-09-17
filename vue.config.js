@@ -7,6 +7,7 @@ module.exports = {
     pluginOptions: {
         electronBuilder: {
             preload: 'src/preload.js',
+            customFileProtocol: './',
             builderOptions: {
                 // options placed here will be merged with default configuration and passed to electron-builder
 
