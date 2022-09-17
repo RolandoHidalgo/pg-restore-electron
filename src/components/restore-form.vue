@@ -1,135 +1,156 @@
 <template>
-  <main-content>
-    <v-form>
-      <v-row dense>
-        <v-col cols="3">
-          <v-select
-              dense
-              :items="items"
-              label="Postgres version"
-              outlined
-              v-model="restoreData.binary"
-              item-value="binary"
-          ></v-select>
-        </v-col>
-        <v-col cols="3">
-          <v-text-field
-              dense
-              label="Data Base"
-              outlined
-              v-model="restoreData.dbName"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="3">
-          <v-text-field
-              dense
-              label="User"
-              outlined
-              v-model="restoreData.user"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="3">
-          <v-text-field
-              dense
-              label="Password"
-              outlined
-              v-model="restoreData.password"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="3">
-          <v-text-field
-              dense
-              label="Host"
-              outlined
-              v-model="restoreData.host"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="2">
-          <v-text-field
-              dense
-              label="Port"
-              outlined
-              v-model="restoreData.port"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="5">
-          <v-file-input
-              dense
-              label="Select backup"
-              outlined
-              @change="selectedFile"
-              prepend-icon=""
-              prepend-inner-icon="$file"
-              v-model="file"
-          ></v-file-input>
-        </v-col>
-      </v-row>
+    <main-content>
+        <v-card
+                tile
+                elevation="0"
+                class="ma-0 pa-0 flex flex-column"
+        >
+            <v-card-text>
+                <v-form>
+                    <v-row dense>
+                        <v-col cols="3">
+                            <v-select
+                                    dense
+                                    :items="items"
+                                    label="Postgres version"
+                                    outlined
+                                    v-model="restoreData.binary"
+                                    item-value="binary"
+                                    :loading="binariesLoading"
+                            ></v-select>
+                        </v-col>
+                        <v-col cols="3">
+                            <v-text-field
+                                    prepend-inner-icon="mdi-database"
+                                    dense
+                                    label="Data Base"
+                                    outlined
+                                    v-model="restoreData.dbName"
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="3">
+                            <v-text-field
+                                    prepend-inner-icon="mdi-account"
+                                    dense
+                                    label="User"
+                                    outlined
+                                    v-model="restoreData.user"
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="3">
+                            <v-text-field
+                                    prepend-inner-icon="mdi-form-textbox-password"
+                                    dense
+                                    label="Password"
+                                    type="password"
+                                    outlined
+                                    v-model="restoreData.password"
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="3">
+                            <v-text-field
+                                    prepend-inner-icon="mdi-ip-network-outline"
+                                    dense
+                                    label="Host"
+                                    outlined
+                                    v-model="restoreData.host"
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="3">
+                            <v-text-field
+                                    prepend-inner-icon="mdi-connection"
+                                    dense
+                                    label="Port"
+                                    outlined
+                                    v-model="restoreData.port"
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="6">
+                            <v-file-input
+                                    dense
+                                    label="Select backup"
+                                    outlined
+                                    @change="selectedFile"
+                                    prepend-icon=""
+                                    prepend-inner-icon="$file"
+                                    v-model="file"
+                            ></v-file-input>
+                        </v-col>
+                    </v-row>
 
 
-      <v-btn color="primary" @click="click">restore</v-btn>
+                    <div>
+                        <restore-console></restore-console>
+                    </div>
+                </v-form>
+            </v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" @click="click">restore</v-btn>
+            </v-card-actions>
+        </v-card>
 
-      <div>
-        <restore-console></restore-console>
-      </div>
-    </v-form>
-  </main-content>
+    </main-content>
 </template>
 
 <script>
-import MainContent from "./MainContent";
-import RestoreConsole from "@/components/restore-console";
+    import MainContent from "./MainContent";
+    import RestoreConsole from "@/components/restore-console";
 
-export default {
-  name: "restore-form",
-  components: {RestoreConsole, MainContent},
-  beforeMount() {
-    this.$electron.getFileArg().then(data => {
-      if (data !== null) {
-        const file = new File([], data, {
-          type: data.type
-        });
-        this.file = file;
-        this.restoreData.backupPath = data;
-      }
+    export default {
+        name: "restore-form",
+        components: {RestoreConsole, MainContent},
+        beforeMount() {
+            this.$electron.getFileArg().then(data => {
+                if (data !== null) {
+                    const file = new File([], data, {
+                        type: data.type
+                    });
+                    this.file = file;
+                    this.restoreData.backupPath = data;
+                }
 
 
-    })
+            });
 
-  },
-  mounted() {
 
-  },
-  data() {
-    return {
-      file: null,
-      restoreData: {
-        dbName: '',
-        port: '5432',
-        host: 'localhost',
-        backupPath: null,
-        user: 'postgres',
-        password: '',
-        binary: ''
-      }
+        },
+        mounted() {
+            this.binariesLoading = true;
+            this.$electron.getBinaries().then(binaries => {
+                this.items = binaries.map(e => {
+                    return {...e, text: `${e.version} - ${e.arq}`}
+                });
+                this.binariesLoading = false;
+            })
+
+        },
+        data() {
+            return {
+                file: null,
+                items: [],
+                binariesLoading: false,
+                restoreData: {
+                    dbName: '',
+                    port: '5432',
+                    host: 'localhost',
+                    backupPath: null,
+                    user: 'postgres',
+                    password: '',
+                    binary: ''
+                }
+            }
+        },
+        methods: {
+            selectedFile(file) {
+                this.restoreData.backupPath = file ? file.path : null;
+                console.log(this.restoreData.backupPath);
+            },
+            click() {
+                this.$electron.restoreDb(this.restoreData);
+            }
+        }
     }
-  },
-  computed: {
-    items() {
-      return this.$electron.getBinaries().map(e => {
-        return {...e, text: `${e.version} - ${e.arq}`}
-      });
-    }
-  },
-  methods: {
-    selectedFile(file) {
-      this.restoreData.backupPath = file ? file.path : null;
-      console.log(this.restoreData.backupPath);
-    },
-    click() {
-      this.$electron.restoreDb(this.restoreData);
-    }
-  }
-}
 </script>
 
 <style scoped>

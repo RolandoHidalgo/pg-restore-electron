@@ -10,17 +10,17 @@ import gffo from 'get-file-object-from-local-path';
 const isDevelopment = process.env.NODE_ENV !== 'production'
 import path from 'path';
 import {restoreDb} from "@/core/utils/restore/restore-db";
+// @ts-ignore
+import binaryUtils from './core/utils/restore/binariesUtils';
 
-
+const postgresBinaries = binaryUtils();
 
 const {handleSquirell} = require('./core/utils/restore/regeditUtils');
 handleSquirell(app);
 console.log(process.argv, 'el args');
 
 
-
 // setup the titlebar main process
-
 
 
 // Scheme must be registered before the app is ready
@@ -36,7 +36,6 @@ async function createWindow() {
         height: 600,
         autoHideMenuBar: true,
         webPreferences: {
-
             // Use pluginOptions.nodeIntegration, leave this alone
             // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
             nodeIntegration: (process.env
@@ -47,12 +46,12 @@ async function createWindow() {
     })
 
 
-
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
         await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
         if (!process.env.IS_TEST) win.webContents.openDevTools()
     } else {
+        win.removeMenu();
         createProtocol('app')
         // Load the index.html when not in development
         win.loadURL('app://./index.html')
@@ -99,6 +98,13 @@ app.on('ready', async () => {
         });
         console.log(backupFile[0]);
         return backupFile.length > 0 ? backupFile[0] : null;
+
+
+    });
+
+    ipcMain.handle('get-binaries', (event, dbOptions) => {
+
+        return postgresBinaries;
 
 
     });

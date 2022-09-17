@@ -12,7 +12,7 @@
 <!--        <v-icon>mdi-checkbox-blank-outline</v-icon>-->
 <!--        <v-icon>mdi-close</v-icon>-->
 <!--      </v-system-bar>-->
-        <v-main class="pa-3">
+        <v-main>
             <restore-form></restore-form>
         </v-main>
     </v-app>
@@ -31,8 +31,8 @@
     });
 </script>
 <style>
-body{
-  overflow: hidden;
+html,body{
+  overflow: auto !important;
 }
 .bar{
   -webkit-app-region: drag;

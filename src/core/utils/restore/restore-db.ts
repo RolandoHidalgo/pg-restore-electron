@@ -36,7 +36,7 @@ const restoreDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
 
     bat.on('exit', (code: any) => {
         console.log(`Child exited with code ${code}`);
-        //event.sender.send('restore-console',`Child exited with code ${code}`)
+        event.sender.send('restore-logs',`finish-OK`)
     });
     bat.on('error', (code: any) => {
         console.log(`error ${code}`);
