@@ -1,6 +1,9 @@
 <template>
-    <div class="console" id="console">
-        <p style="color: red" v-for="m in  messages">{{m}}</p>
+
+    <div>
+        <div class="console" id="console">
+            <p  v-for="m in  messages">{{m}}</p>
+        </div>
     </div>
 </template>
 
@@ -10,24 +13,27 @@
         mounted() {
             this.$electron.handleRestoreConsoleEvent((event, value) => {
                 this.messages.push(value + '\n');
-                console.log(value);
                 if (value === 'finish-OK') {
-                    console.log('matao el gallo');
+                    this.$emit('done');
                 }
-                this.updateScroll();
-            })
+                setTimeout(this.updateScroll, 50)
+            });
+            this.element = document.getElementById("console");
+
         },
         data() {
             return {
+                element: null,
                 messages: []
             }
         },
         methods: {
             updateScroll() {
-                const element = document.getElementById("console");
-                element.scrollTop = element.scrollHeight;
+                this.element.scrollTo({behavior: 'auto', top: Number(this.element.scrollHeight)});
+
             }
         }
+
     }
 </script>
 
@@ -37,6 +43,6 @@
         min-height: 300px;
         max-height: 300px;
         overflow: auto;
-        color: red;
+        color: #f5fff2;
     }
 </style>

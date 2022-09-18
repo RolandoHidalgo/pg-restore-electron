@@ -62,6 +62,7 @@
                                     dense
                                     label="Port"
                                     outlined
+                                    type="number"
                                     v-model="restoreData.port"
                             ></v-text-field>
                         </v-col>
@@ -80,13 +81,14 @@
 
 
                     <div>
-                        <restore-console></restore-console>
+                        <restore-console @done="processFinish"></restore-console>
                     </div>
                 </v-form>
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="click">restore</v-btn>
+                <v-btn color="primary" @click="click" :loading="running">restore</v-btn>
+                <v-btn color="primary" @click="processFinish" :loading="running">sss</v-btn>
             </v-card-actions>
         </v-card>
 
@@ -130,6 +132,7 @@
                 file: null,
                 items: [],
                 binariesLoading: false,
+                running: false,
                 restoreData: {
                     dbName: '',
                     port: '5432',
@@ -142,12 +145,17 @@
             }
         },
         methods: {
+            processFinish() {
+                this.running = false;
+                this.$electron.restoreFinish();
+            },
             selectedFile(file) {
                 this.restoreData.backupPath = file ? file.path : null;
                 console.log(this.restoreData.backupPath);
             },
             click() {
                 this.$electron.restoreDb(this.restoreData);
+                this.running = true;
             }
         }
     }

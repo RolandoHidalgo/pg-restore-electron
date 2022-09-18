@@ -9,7 +9,7 @@ import gffo from 'get-file-object-from-local-path';
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 import path from 'path';
-import {restoreDb} from "@/core/utils/restore/restore-db";
+import {restoreDb, restoreFinishActions} from "@/core/utils/restore/restore-db";
 // @ts-ignore
 import binaryUtils from './core/utils/restore/binariesUtils';
 
@@ -28,7 +28,7 @@ protocol.registerSchemesAsPrivileged([
     {scheme: 'app', privileges: {secure: true, standard: true}}
 ])
 
-
+app.setAppUserModelId(app.getName());
 async function createWindow() {
     // Create the browser window.
     const win = new BrowserWindow({
@@ -87,6 +87,11 @@ app.on('ready', async () => {
     // }
     ipcMain.on('restore-db', (event, dbOptions) => {
         restoreDb(dbOptions, event);
+
+    });
+
+    ipcMain.on('restore-finish', (event, dbOptions) => {
+        restoreFinishActions(event);
 
     });
 

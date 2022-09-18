@@ -6,22 +6,10 @@ body {
 
 .box {
     display: flex;
-    flex-flow: column;
-    height: 100%;
+    flex-direction: column;
+    height: 200px;
+    background-color: #2b2b2b;
+    color: #b39ddb;
+    overflow: auto;
 }
 
-.box .row {
-    border: 1px dotted #0313fc;
-}
-
-.box .row.header {
-    flex: 0 1 auto;
-}
-
-.box .row.content {
-    flex: 1 1 auto;
-}
-
-.box .row.footer {
-    flex: 0 1 40px;
-}

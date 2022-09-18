@@ -7,6 +7,7 @@ const {contextBridge, ipcRenderer, app} = electron;
 
 contextBridge.exposeInMainWorld('versions', {
     restoreDb: (dbOptions) => ipcRenderer.send('restore-db', dbOptions),
+    restoreFinish: () => ipcRenderer.send('restore-finish'),
     handleRestoreConsoleEvent: (callback) => ipcRenderer.on('restore-logs', callback),
     getBinaries: () => ipcRenderer.invoke('get-binaries'),
     getFileArg: () => {
