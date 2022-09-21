@@ -87,7 +87,7 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="click" :loading="running" class="mr-2">restore</v-btn>
+                <v-btn color="primary" @click="click" :loading="running" class="mr-3">restore</v-btn>
 <!--                <v-btn color="primary" @click="processFinish" :loading="running
 ">sss</v-btn>-->
             </v-card-actions>
