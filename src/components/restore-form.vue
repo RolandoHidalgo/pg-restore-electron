@@ -6,17 +6,18 @@
                 class="ma-0 pa-0 flex flex-column"
         >
             <v-card-text>
-                <v-form>
+                <v-form v-model="formValid">
                     <v-row dense>
                         <v-col cols="3">
                             <v-select
                                     dense
                                     :items="items"
-                                    label="Postgres version"
+                                    label="* Postgres version"
                                     outlined
                                     v-model="restoreData.binary"
                                     item-value="binary"
                                     :loading="binariesLoading"
+                                    :rules="[rules.required]"
                             ></v-select>
                         </v-col>
                         <v-col cols="3">
@@ -26,6 +27,7 @@
                                     label="Data Base"
                                     outlined
                                     v-model="restoreData.dbName"
+                                    :rules="[rules.required]"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -35,6 +37,7 @@
                                     label="User"
                                     outlined
                                     v-model="restoreData.user"
+                                    :rules="[rules.required]"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -45,6 +48,7 @@
                                     type="password"
                                     outlined
                                     v-model="restoreData.password"
+                                    :rules="[rules.required]"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -54,6 +58,7 @@
                                     label="Host"
                                     outlined
                                     v-model="restoreData.host"
+                                    :rules="[rules.required]"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="3">
@@ -64,6 +69,7 @@
                                     outlined
                                     type="number"
                                     v-model="restoreData.port"
+                                    :rules="[rules.required]"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="6">
@@ -75,6 +81,7 @@
                                     prepend-icon=""
                                     prepend-inner-icon="$file"
                                     v-model="file"
+                                    :rules="[rules.required]"
                             ></v-file-input>
                         </v-col>
                     </v-row>
@@ -87,8 +94,8 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="click" :loading="running">restore</v-btn>
-<!--                <v-btn color="primary" @click="processFinish" :loading="running">sss</v-btn>-->
+                <v-btn color="primary" @click="click" :loading="running" :disabled="!formValid">restore</v-btn>
+                <!--                <v-btn color="primary" @click="processFinish" :loading="running">sss</v-btn>-->
             </v-card-actions>
         </v-card>
 
@@ -129,6 +136,10 @@
         },
         data() {
             return {
+                rules:{
+                    required:value=>!!value||'Este campo es obligatorio'
+                },
+                formValid: false,
                 file: null,
                 items: [],
                 binariesLoading: false,
