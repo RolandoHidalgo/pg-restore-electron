@@ -1,15 +1,13 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
+import './style.css'
 import App from './App.vue'
-//import router from './router'
-import '@mdi/font/css/materialdesignicons.css'
-import 'vuetify/dist/vuetify.min.css'
-import './core/bootstrapping/roboto-font-face.css'
-import {vuetify} from './plugins/vuetify'
-import {electronPluggin} from "@/electronPluggin";
 
-Vue.config.productionTip = false;
-Vue.use(electronPluggin);
-new Vue({
-    vuetify,
-    render: h => h(App)
-}).$mount('#app')
+createApp(App).mount('#app').$nextTick(() => {
+  // Remove Preload scripts loading
+  postMessage({ payload: 'removeLoading' }, '*')
+
+  // Use contextBridge
+  window.ipcRenderer.on('main-process-message', (_event, message) => {
+    console.log(message)
+  })
+})
