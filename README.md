@@ -1,24 +1,34 @@
-# pg-restore
+# pg-restore-vite
 
-## Project setup
-```
-yarn install
-```
+An Electron application with Vue and TypeScript
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+## Recommended IDE Setup
 
-### Compiles and minifies for production
-```
-yarn build
-```
+- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin)
 
-### Lints and fixes files
-```
-yarn lint
+## Project Setup
+
+### Install
+
+```bash
+$ pnpm install
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Development
+
+```bash
+$ pnpm dev
+```
+
+### Build
+
+```bash
+# For windows
+$ pnpm build:win
+
+# For macOS
+$ pnpm build:mac
+
+# For Linux
+$ pnpm build:linux
+```
