@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: pg-restore-vite
+appId: com.electron.pgUi-restore
+productName: pg-restore
 directories:
   buildResources: build
 files:
@@ -16,7 +16,7 @@ fileAssociations:
   name: 'BACKUP'
   description: 'postgresql backup file'
 win:
-  executableName: pg-restore-vite
+  executableName: pgUI-restore
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
