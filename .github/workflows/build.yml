@@ -29,6 +29,10 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu-latest')
         run: sudo apt autoremove
 
+      - name: snap
+        if: startsWith(matrix.os, 'ubuntu-latest')
+        run: sudo snap install snapcraft --classic
+
       - name: Install libarchive rpm on Linux
         if: startsWith(matrix.os, 'ubuntu-latest')
         run: sudo apt-get install libarchive-tools rpm
