@@ -1,6 +1,6 @@
 {
   "name": "PgUiRestore",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "An Electron application with Vue and TypeScript",
   "main": "./out/main/index.js",
   "author": "example.com",
