@@ -5,7 +5,7 @@ import icon from "../../resources/icon.ico?asset";
 import { GlobalConfig } from "./utils/restore/GlobalConfig";
 
 
-import { restoreDb, restoreFinishActions } from "./utils/restore/restore-db";
+import { restoreDb, restoreFinishActions,createDb } from "./utils/restore/restore-db";
 import { findBinarys } from "./utils/restore/binariesUtils";
 
 // @ts-ignore
@@ -67,6 +67,11 @@ app.whenReady().then(() => {
   });
   ipcMain.on("restore-db", (event, dbOptions) => {
     restoreDb(dbOptions, event);
+
+  });
+
+  ipcMain.on("create-db", (event, dbOptions) => {
+    createDb(dbOptions, event);
 
   });
 

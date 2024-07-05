@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import MainContent from "./MainContent.vue";
 import RestoreConsole from "./restore-console.vue";
-import { onBeforeMount, onMounted, ref } from "vue";
+import {onBeforeMount, onMounted, ref} from "vue";
 
 const file = ref([]);
 onBeforeMount(() => {
@@ -27,7 +27,7 @@ onMounted(() => {
   window.electron.getBinaries().then((binaries) => {
     console.log(binaries, "binaries");
     items.value = binaries.map(e => {
-      return { ...e, text: `${e.version} - ${e.arq}` };
+      return {...e, text: `${e.version} - ${e.arq}`};
     });
     binariesLoading.value = false;
   });
@@ -72,19 +72,21 @@ function selectedFile(fileParam) {
 
 function click() {
   debugger;
-  window.electron.restoreDb({ ...restoreData.value });
+  window.electron.restoreDb({...restoreData.value});
   running.value = true;
 }
 
-
+function addDb() {
+  alert("sas")
+}
 </script>
 
 <template>
   <main-content>
     <v-card
-      tile
-      elevation="0"
-      class="ma-0 pa-0 flex flex-column"
+        tile
+        elevation="0"
+        class="ma-0 pa-0 flex flex-column"
     >
 
       <v-card-text>
@@ -92,85 +94,95 @@ function click() {
           <v-row dense>
             <v-col cols="3">
               <VAutocomplete
-                item-title="text"
-                item-value="binary"
-                variant="outlined"
-                density="compact"
-                :items="items"
-                v-model="restoreData.binary"
-                label="* Postgres version"
-                :loading="binariesLoading"
-                :rules="[rules.required]"
+                  item-title="text"
+                  item-value="binary"
+                  variant="outlined"
+                  density="compact"
+                  :items="items"
+                  v-model="restoreData.binary"
+                  label="* Postgres version"
+                  :loading="binariesLoading"
+                  :rules="[rules.required]"
               ></VAutocomplete>
 
             </v-col>
             <v-col cols="3">
               <v-text-field
-                prepend-inner-icon="mdi-database"
-                variant="outlined"
-                density="compact"
-                label="Data Base"
+                  prepend-inner-icon="mdi-database"
+                  variant="outlined"
+                  density="compact"
+                  label="Data Base"
 
-                v-model="restoreData.dbName"
-                :rules="[rules.required]"
+                  v-model="restoreData.dbName"
+                  :rules="[rules.required]"
+
+              >
+                <template v-slot:append-inner>
+                  <v-icon
+
+                      icon="mdi-plus"
+                      @click="addDb"
+                  />
+                </template>
+
+              </v-text-field>
+            </v-col>
+            <v-col cols="3">
+              <v-text-field
+                  prepend-inner-icon="mdi-account"
+
+                  label="User"
+                  variant="outlined"
+                  density="compact"
+                  v-model="restoreData.user"
+                  :rules="[rules.required]"
               ></v-text-field>
             </v-col>
             <v-col cols="3">
               <v-text-field
-                prepend-inner-icon="mdi-account"
+                  prepend-inner-icon="mdi-form-textbox-password"
+                  variant="outlined"
+                  density="compact"
+                  label="Password"
+                  type="password"
 
-                label="User"
-                variant="outlined"
-                density="compact"
-                v-model="restoreData.user"
-                :rules="[rules.required]"
+                  v-model="restoreData.password"
+                  :rules="[rules.required]"
               ></v-text-field>
             </v-col>
             <v-col cols="3">
               <v-text-field
-                prepend-inner-icon="mdi-form-textbox-password"
-                variant="outlined"
-                density="compact"
-                label="Password"
-                type="password"
+                  prepend-inner-icon="mdi-ip-network-outline"
+                  variant="outlined"
+                  density="compact"
+                  label="Host"
 
-                v-model="restoreData.password"
-                :rules="[rules.required]"
+                  v-model="restoreData.host"
+                  :rules="[rules.required]"
               ></v-text-field>
             </v-col>
             <v-col cols="3">
               <v-text-field
-                prepend-inner-icon="mdi-ip-network-outline"
-                variant="outlined"
-                density="compact"
-                label="Host"
+                  variant="outlined"
+                  density="compact"
+                  label="Port"
 
-                v-model="restoreData.host"
-                :rules="[rules.required]"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="3">
-              <v-text-field
-                variant="outlined"
-                density="compact"
-                label="Port"
-
-                type="number"
-                v-model="restoreData.port"
-                :rules="[rules.required]"
+                  type="number"
+                  v-model="restoreData.port"
+                  :rules="[rules.required]"
               ></v-text-field>
             </v-col>
             <v-col cols="6">
               <v-file-input
-                variant="outlined"
-                density="compact"
-                label="Select backup"
+                  variant="outlined"
+                  density="compact"
+                  label="Select backup"
 
-                @change="selectedFile"
-                prepend-icon=""
-                prepend-inner-icon="$file"
-                v-model="file"
-                :rules="[rules.required]"
+                  @change="selectedFile"
+                  prepend-icon=""
+                  prepend-inner-icon="$file"
+                  v-model="file"
+                  :rules="[rules.required]"
               ></v-file-input>
             </v-col>
           </v-row>

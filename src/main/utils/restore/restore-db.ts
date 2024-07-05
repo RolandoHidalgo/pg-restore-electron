@@ -49,6 +49,48 @@ const restoreDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
   });
 };
 
+
+
+
+const createDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
+  const { dbName, host, password, port, user, backupPath, binary } = dbOptions;
+
+  //const pgRestoreBinary = `C:\\Program Files (x86)\\PostgreSQL\\10\\bin\\pg_restore.exe`;
+  const params = `--host ${host} --port ${port} --username ${user} --role postgres --dbname ${dbName} --verbose`;
+
+
+  const paramsSplitted = params.toString().split(" ");
+  paramsSplitted.push(path.normalize(backupPath));
+
+
+  console.log(binary, paramsSplitted.join(" "));
+
+  // const bat = spawn(binary, paramsSplitted, { env: { ...process.env, PGPASSWORD: password } });
+  // getBrowserWindow(event)?.setProgressBar(2);
+  //
+  // bat.stdout.setEncoding("utf8");
+  //
+  // bat.stdout.on("data", (data: any) => {
+  //   console.log("data", data.toString());
+  //   event.sender.send("restore-logs", data.toString());
+  // });
+  // bat.stderr.setEncoding("utf8");
+  // bat.stderr.on("data", (data: any) => {
+  //   console.log("error", data.toString());
+  //   event.sender.send("restore-logs", data.toString());
+  // });
+  //
+  // bat.on("exit", (code: any) => {
+  //   console.log(`Child exited with code ${code}`);
+  //   event.sender.send("restore-logs", `finish-OK`);
+  // });
+  // bat.on("error", (code: any) => {
+  //   console.log(`error ${code}`);
+  //   event.sender.send("restore-logs", `error ${code}`);
+  // });
+};
+
+
 const restoreFinishActions = (event: IpcMainEvent) => {
   //probar con el nistallIcon pero no es la solucion final
   //  const icon = 'app://./favicon.ico';
@@ -65,4 +107,4 @@ const getBrowserWindow = (event: IpcMainEvent): BrowserWindow | null => {
   return BrowserWindow.fromWebContents(event.sender);
 };
 
-export { restoreDb, restoreFinishActions };
+export { restoreDb, restoreFinishActions ,createDb};
