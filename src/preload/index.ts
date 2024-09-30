@@ -3,7 +3,7 @@ import {electronAPI} from '@electron-toolkit/preload'
 
 const api = {
     restoreDb: (dbOptions) => ipcRenderer.send('restore-db', dbOptions),
-    createDb: (dbOptions) => ipcRenderer.send('create-db', dbOptions),
+    createDb: (dbOptions,createDbOptions) => ipcRenderer.send('create-db', dbOptions,createDbOptions),
     restoreFinish: () => ipcRenderer.send('restore-finish'),
     handleRestoreConsoleEvent: (callback) => ipcRenderer.on('restore-logs', callback),
     getBinaries: () => ipcRenderer.invoke('get-binaries'),

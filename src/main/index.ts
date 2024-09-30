@@ -1,15 +1,15 @@
-import { app, shell, BrowserWindow, ipcMain } from "electron";
-import { join } from "node:path";
-import { electronApp, optimizer, is } from "@electron-toolkit/utils";
+import {app, shell, BrowserWindow, ipcMain} from "electron";
+import {join} from "node:path";
+import {electronApp, optimizer, is} from "@electron-toolkit/utils";
 import icon from "../../resources/icon.ico?asset";
-import { GlobalConfig } from "./utils/restore/GlobalConfig";
+import {GlobalConfig} from "./utils/restore/GlobalConfig";
 
 
-import { restoreDb, restoreFinishActions,createDb } from "./utils/restore/restore-db";
-import { findBinarys } from "./utils/restore/binariesUtils";
+import {restoreDb, restoreFinishActions, createDb} from "./utils/restore/restore-db";
+import {findBinarys} from "./utils/restore/binariesUtils";
 
 // @ts-ignore
-import { handleSquirell } from "./utils/restore/regeditUtils";
+import {handleSquirell} from "./utils/restore/regeditUtils";
 
 
 const postgresBinaries = findBinarys();
@@ -27,7 +27,7 @@ function createWindow(): void {
     height: 670,
     show: false,
     autoHideMenuBar: true,
-    ...(process.platform === "linux" ? { icon } : {}),
+    ...(process.platform === "linux" ? {icon} : {}),
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
       sandbox: false
@@ -40,7 +40,7 @@ function createWindow(): void {
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url);
-    return { action: "deny" };
+    return {action: "deny"};
   });
 
   // HMR for renderer base on electron-vite cli.
@@ -70,8 +70,8 @@ app.whenReady().then(() => {
 
   });
 
-  ipcMain.on("create-db", (event, dbOptions) => {
-    createDb(dbOptions, event);
+  ipcMain.on("create-db", (event, dbOptions, createDbOptions) => {
+    createDb(dbOptions,createDbOptions, event );
 
   });
 
@@ -100,7 +100,7 @@ app.whenReady().then(() => {
   });
   createWindow();
 
-  app.on("activate", function() {
+  app.on("activate", function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

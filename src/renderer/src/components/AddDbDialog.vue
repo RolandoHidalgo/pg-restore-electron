@@ -3,7 +3,11 @@
 
 import {ref} from "vue";
 
-const props = defineProps(['valor']);
+const props = withDefaults(defineProps<{
+  isOpen?: boolean,
+}>(), {
+  isOpen: false,
+});
 
 
 const formValid = ref(false);
@@ -20,37 +24,32 @@ function click() {
 </script>
 
 <template>
-  <v-dialog max-width="500">
-    <v-form v-model="formValid">
-      <template v-slot:activator="{ props: activatorProps }">
+  <v-dialog
+    v-model="addDbDialogOpen"
+    width="auto"
+  >
+    <v-card
+      max-width="400"
+      prepend-icon="mdi-update"
+      text="Your application will relaunch automatically after the update is complete."
+      title="Update in progress"
+      persistent
+    >
+      <template v-slot:actions>
+        <v-spacer></v-spacer>
         <v-btn
-            v-bind="activatorProps"
-            color="surface-variant"
-            text="Open Dialog"
-            variant="flat"
+          color="error"
+          class="ms-auto"
+          text="Cancelar"
+          @click="addDbDialogOpen = false"
+        ></v-btn>
+        <v-btn
+          class="ms-auto"
+          text="Ok"
+          @click="addDbDialogOpen = false"
         ></v-btn>
       </template>
-
-      <template v-slot:default="{ isActive }">
-        <v-card title="Dialog">
-          <v-card-text>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-            dolore
-            magna aliqua.
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-
-            <v-btn
-                text="Close Dialog"
-                @click="isActive.value = false"
-            ></v-btn>
-            <v-btn color="primary" @click="click" :loading="running" :disabled="!formValid">restore</v-btn>
-          </v-card-actions>
-        </v-card>
-      </template>
-    </v-form>
+    </v-card>
   </v-dialog>
 
 </template>
