@@ -32,6 +32,8 @@ import {
 import RestoreConsole from './restore-console.vue'
 import { Switch } from '@renderer/components/ui/switch'
 import NewDbForm from './NewDbForm.vue'
+import { de } from 'vuetify/locale'
+import { FormDescription } from './ui/form'
 
 
 const isOpenDialog = ref(false)
@@ -97,23 +99,21 @@ const pepe = computed(() => {
   const schema = newDb.value ? 1 : 0
   return schema
 })
-const { handleSubmit, setFieldValue } = useForm({
-  validationSchema: computed(() => toTypedSchema(newDb.value ? coneccionSchema.merge(newDbSchema).passthrough() : coneccionSchema.passthrough())),
-  initialValues: {
-    port: '5432',
-    host: 'localhost',
-    user: 'postgres'
+const initVals = {
+  port: '5432',
+  host: 'localhost',
+  user: 'postgres'
 
-  },
-  keepValuesOnUnmount: true
-
-})
+}
+const fileRef = ref();
 onBeforeMount(() => {
   window.electron.getFileArg().then(data => {
     console.log(data, 'la data')
     if (data !== null) {
 
-      setFieldValue('backupPath', data)
+
+      setFieldValue('backupPath', {path:data})
+
     }
 
 
@@ -121,6 +121,14 @@ onBeforeMount(() => {
 
 
 })
+
+const { handleSubmit, setFieldValue, values } = useForm({
+  validationSchema: computed(() => toTypedSchema(newDb.value ? coneccionSchema.merge(newDbSchema).passthrough() : coneccionSchema.passthrough())),
+  initialValues: initVals,
+  keepValuesOnUnmount: true
+
+})
+
 const onSubmit = handleSubmit((values) => {
   console.log(values, 'asdfsdfsf')
   isOpenDialog.value = true
@@ -128,6 +136,9 @@ const onSubmit = handleSubmit((values) => {
   window.electron.createDb(formValues, formValues)
 })
 
+const isFileSelected = computed(()=>{
+  return values.backupPath && values.backupPath.path
+});
 
 </script>
 
@@ -176,7 +187,7 @@ const onSubmit = handleSubmit((values) => {
             </FormItem>
           </FormField>
         </div>
-        <NewDbForm v-if="newDb"/>
+        <NewDbForm v-if="newDb" />
         <div>
           <FormField
             v-slot="{ componentField }"
@@ -190,6 +201,7 @@ const onSubmit = handleSubmit((values) => {
                   v-bind="componentField"
                 />
               </FormControl>
+
               <FormMessage />
             </FormItem>
           </FormField>
@@ -259,6 +271,9 @@ const onSubmit = handleSubmit((values) => {
                   @blur="handleBlur"
                 />
               </FormControl>
+              <FormDescription v-if="isFileSelected">
+                Archivo seleccionado {{values.backupPath?.path}}
+              </FormDescription>
               <FormMessage />
             </FormItem>
           </FormField>
@@ -270,7 +285,7 @@ const onSubmit = handleSubmit((values) => {
           class="w-full"
           type="submit"
         >
-          Create account
+          Restore Backup
         </Button>
       </CardFooter>
     </Card>

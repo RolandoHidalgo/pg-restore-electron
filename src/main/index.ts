@@ -89,7 +89,7 @@ app.whenReady().then(() => {
     const backupFile = process.argv.filter(e => {
       return e.toString().includes(".backup");
     });
-    console.log(backupFile[0]);
+    console.log(backupFile[0],'file');
     return backupFile.length > 0 ? backupFile[0] : null;
 
 
