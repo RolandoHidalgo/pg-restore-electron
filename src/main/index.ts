@@ -23,9 +23,10 @@ function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     title: 'pgRestore',
-    width: 900,
-    height: 670,
+    width: 590,
+    height: 550,
     show: false,
+    //resizable:false,
     autoHideMenuBar: true,
     ...(process.platform === "linux" ? {icon} : {}),
     webPreferences: {
@@ -55,7 +56,9 @@ function createWindow(): void {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
+app.commandLine.appendSwitch('lang','es');
 app.whenReady().then(() => {
+  app.commandLine.appendSwitch('lang','es');
   // Set app user model id for windows
   electronApp.setAppUserModelId("com.electron.pgUI-restore");
 

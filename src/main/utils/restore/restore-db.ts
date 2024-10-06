@@ -82,7 +82,7 @@ const createDb = (dbOptions: DbOtions,createDbOptions:CreateDebOptions, event: I
     params += ` --template ${createDbOptions.template}`
   }
 
-  params+= ` ${createDbOptions.name}`
+  params+= ` ${dbName}`
 
   const paramsSplitted = params.toString().split(" ");
 
@@ -108,11 +108,14 @@ const createDb = (dbOptions: DbOtions,createDbOptions:CreateDebOptions, event: I
   bat.on("exit", (code: any) => {
     console.log(`Child exited with code ${code}`);
     event.sender.send("restore-logs", `finish-OK`);
+    restoreDb(dbOptions,event);
   });
   bat.on("error", (code: any) => {
     console.log(`error ${code}`);
     event.sender.send("restore-logs", `error ${code}`);
   });
+
+
 };
 
 
