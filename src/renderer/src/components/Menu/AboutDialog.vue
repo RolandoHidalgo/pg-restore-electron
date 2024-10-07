@@ -41,7 +41,7 @@ const checkUpdates = () => {
   <Dialog v-model:open="model" class="!p-0">
     <DialogContent class="sm:max-w-[475px]">
       <DialogHeader>
-        <DialogTitle>Acerca de</DialogTitle>
+        <DialogTitle>!!Acerca de ... </DialogTitle>
         <DialogDescription>
           Infomación sobre esta versión.
         </DialogDescription>
