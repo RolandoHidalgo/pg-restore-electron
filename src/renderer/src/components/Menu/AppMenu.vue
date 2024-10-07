@@ -36,13 +36,5 @@ const handleAbout = (event) => {
 </template>
 
 <style scoped>
-//.drag{
-//  -webkit-app-region: drag;
-//}
-//.no-drag{
-//  -webkit-app-region: no-drag;
-//}
-//.fixed{
-//  top:30px
-//}
+
 </style>
