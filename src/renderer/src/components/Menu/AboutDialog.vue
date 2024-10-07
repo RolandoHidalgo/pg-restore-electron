@@ -16,13 +16,14 @@ import {
 import { GithubLogoIcon } from '@radix-icons/vue'
 import { onMounted, ref } from 'vue'
 import { ReloadIcon } from '@radix-icons/vue'
+
 const model = defineModel({ type: Boolean, required: true })
 
 const messages = ref('')
 const updating = ref(false)
 onMounted(() => {
   window.electron.handleUpdateInfo((e, { updateEvent, text }) => {
-    messages.value = updateEvent
+    messages.value = text
     if (updateEvent === 'Error' || updateEvent === 'Update_not_available' || updateEvent === 'Update_downloaded') {
       updating.value = false
     }

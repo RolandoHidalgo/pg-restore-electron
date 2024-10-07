@@ -41,22 +41,22 @@ function createWindow(): void {
     }
   })
 
-  function sendStatusToWindow(updateEvent, text = '') {
+  function sendStatusToWindow(updateEvent, text ) {
     log.info(text)
     mainWindow.webContents.send('update-logs', { updateEvent, text })
   }
 
   autoUpdater.on('checking-for-update', () => {
-    sendStatusToWindow('Checking')
+    sendStatusToWindow('Checking','Checking')
   })
   autoUpdater.on('update-available', (info) => {
-    sendStatusToWindow('Update_available.')
+    sendStatusToWindow('Update_available.','Update_available.')
   })
   autoUpdater.on('update-not-available', (info) => {
-    sendStatusToWindow('Update_not_available')
+    sendStatusToWindow('Update_not_available','Update_not_available')
   })
   autoUpdater.on('error', (err) => {
-    sendStatusToWindow('Error')
+    sendStatusToWindow('Error','Error')
   })
   autoUpdater.on('download-progress', (progressObj) => {
     let log_message = 'Download speed: ' + progressObj.bytesPerSecond
@@ -65,7 +65,7 @@ function createWindow(): void {
     sendStatusToWindow('progress',log_message)
   })
   autoUpdater.on('update-downloaded', (info) => {
-    sendStatusToWindow('Update_downloaded')
+    sendStatusToWindow('Update_downloaded','Update_downloaded')
   })
 
   mainWindow.on('ready-to-show', () => {
