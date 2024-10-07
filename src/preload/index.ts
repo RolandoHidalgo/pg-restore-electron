@@ -5,8 +5,10 @@ const api = {
     restoreDb: (dbOptions) => ipcRenderer.send('restore-db', dbOptions),
     createDb: (dbOptions,createDbOptions) => ipcRenderer.send('create-db', dbOptions,createDbOptions),
     restoreFinish: () => ipcRenderer.send('restore-finish'),
-    handleRestoreConsoleEvent: (callback) => ipcRenderer.on('restore-logs', callback),
+    //updateInfo: (event,data) => ipcRenderer.send(event,data),
+    handleUpdateInfo: (callback) => ipcRenderer.on('update-logs', callback),
     getBinaries: () => ipcRenderer.invoke('get-binaries'),
+    checkUpdate: () => ipcRenderer.send('check-update'),
     getFileArg: () => {
 
         return ipcRenderer.invoke('file-args');
