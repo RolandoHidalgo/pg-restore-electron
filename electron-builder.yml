@@ -15,7 +15,6 @@ fileAssociations:
   ext: 'backup'
   name: 'BACKUP'
   description: 'postgresql backup file'
-  icon: 'build/icons/backup.icon'
 win:
   executableName: pgUI-restore
 nsis:
