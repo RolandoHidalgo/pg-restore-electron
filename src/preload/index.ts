@@ -6,6 +6,8 @@ const api = {
     createDb: (dbOptions,createDbOptions) => ipcRenderer.send('create-db', dbOptions,createDbOptions),
     restoreFinish: () => ipcRenderer.send('restore-finish'),
     //updateInfo: (event,data) => ipcRenderer.send(event,data),
+  handleRestoreConsoleEvent: (callback) => ipcRenderer.on('restore-logs', callback),
+
     handleUpdateInfo: (callback) => ipcRenderer.on('update-logs', callback),
     getBinaries: () => ipcRenderer.invoke('get-binaries'),
     checkUpdate: () => ipcRenderer.send('check-update'),
