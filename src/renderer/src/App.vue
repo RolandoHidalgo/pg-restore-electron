@@ -1,18 +1,23 @@
 <script setup lang="ts">
-
-//import { Button } from './components/ui/button'
-import Container from './components/Container.vue'
 import CreateAccount from './components/CreateAccount.vue'
-import AppMenu from './components/Menu/AppMenu.vue'
+ import AppMenu from './components/Menu/AppMenu.vue'
 
 </script>
 
 <template>
 
-  <div class="bg-muted/40">
-    <AppMenu />
+  <div
+    id="pepe"
+    class="bg-muted/40 h-full flex flex-col p-2"
+  >
+
+    <AppMenu class="mb-2"/>
     <CreateAccount />
 
   </div>
 </template>
+
+<style>
+
+</style>
 

@@ -144,11 +144,11 @@ const isFileSelected = computed(()=>{
 
 <template>
   <form
-    class="w-full "
+    class="w-full flex flex-col grow bg-blue-50"
     @submit="onSubmit"
   >
 
-    <Card>
+    <Card class="flex flex-col grow justify-between">
       <CardHeader>
         <CardTitle>
           Restaurar backup
@@ -157,7 +157,7 @@ const isFileSelected = computed(()=>{
           Entre los parámetros de conexión.
         </CardDescription>
       </CardHeader>
-      <CardContent class="grid grid-cols-2 gap-4 overflow-y-auto h-[55dvh]">
+      <CardContent class="grid grid-cols-2 gap-4 overflow-y-auto h-[60dvh]">
 
 
         <div>
