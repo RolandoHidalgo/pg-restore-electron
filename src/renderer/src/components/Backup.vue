@@ -23,45 +23,20 @@ import { FormControl, FormItem, FormLabel, FormMessage, FormField } from '@rende
 
 import {
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
-  Dialog,
-  DialogFooter
+  Dialog
+
 } from './ui/dialog'
 import RestoreConsole from './restore-console.vue'
 import { Switch } from '@renderer/components/ui/switch'
 import NewDbForm from './NewDbForm.vue'
-import { de } from 'vuetify/locale'
 import { FormDescription } from './ui/form'
 
 
 const isOpenDialog = ref(false)
 
-const newDb = ref(false)
 
-const newDbSchema = z.object({
-  encoding: z
-    .string({
-      required_error: 'Requerido.'
-    }),
-  template: z
-    .string({
-      required_error: 'Requerido.'
-    }),
-  collate: z
-    .string({
-      required_error: 'Requerido.'
-    }),
-  ctype: z
-    .string({
-      required_error: 'Requerido.'
-    }),
-  tablespace: z
-    .string({
-      required_error: 'Requerido.'
-    })
-})
 
 const coneccionSchema = z.object({
   binary: z
@@ -76,10 +51,6 @@ const coneccionSchema = z.object({
     .string({
       required_error: 'Requerido.'
     }).min(1, { message: 'no vacio' }),
-  backupPath: z
-    .record(z.string(), z.any(), {
-      required_error: 'seleccione un backup'
-    }),
   host: z
     .string({
       required_error: 'Requerido.'
@@ -95,10 +66,7 @@ const coneccionSchema = z.object({
 })
 
 
-const pepe = computed(() => {
-  const schema = newDb.value ? 1 : 0
-  return schema
-})
+
 const initVals = {
   port: '5432',
   host: 'localhost',
@@ -106,44 +74,22 @@ const initVals = {
 
 }
 const fileRef = ref();
-onBeforeMount(() => {
-  window.electron.getFileArg().then(data => {
-    console.log(data, 'la data')
-    if (data !== null) {
 
 
-      setFieldValue('backupPath', {path:data})
-
-    }
-
-
-  })
-
-
-})
-
-const { handleSubmit, setFieldValue, values } = useForm({
-  validationSchema: computed(() => toTypedSchema(newDb.value ? coneccionSchema.merge(newDbSchema).passthrough() : coneccionSchema.passthrough())),
+const { handleSubmit, values } = useForm({
+  validationSchema: computed(() => toTypedSchema(coneccionSchema.passthrough())),
   initialValues: initVals,
   keepValuesOnUnmount: true
 
 })
 
-const onSubmit = handleSubmit( (values) => {
-  const fileInputElement = document.getElementById("file_input")
+const onSubmit = handleSubmit((values) => {
   console.log(values, 'asdfsdfsf')
-  console.log(fileInputElement.files[0], 'el file')
-  //console.log(, 'path')
   isOpenDialog.value = true
-
-
-  const formValues = { ...values, backupPath:  window.electron.showFilePath(fileInputElement.files[0]) }
-  window.electron.createDb(formValues, formValues)
+  const formValues = { ...values,backupPath: '' }
+  window.electron.backupDb(formValues)
 })
 
-const isFileSelected = computed(()=>{
-  return values.backupPath && values.backupPath.path
-});
 
 </script>
 
@@ -180,19 +126,11 @@ const isFileSelected = computed(()=>{
                   type="text"
                   v-bind="componentField"
                 />
-                <div>
-                  <Switch
-                    id="new-db"
-                    v-model:checked="newDb"
-                  />
-                  <Label for="new-db" class="text-muted-foreground"> Nueva Db</Label>
-                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
           </FormField>
         </div>
-        <NewDbForm v-if="newDb" />
         <div>
           <FormField
             v-slot="{ componentField }"
@@ -204,7 +142,6 @@ const isFileSelected = computed(()=>{
                 <Input
                   type="text"
                   v-bind="componentField"
-
                 />
               </FormControl>
 
@@ -259,28 +196,6 @@ const isFileSelected = computed(()=>{
                   v-bind="componentField"
                 />
               </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
-        </div>
-        <div class="col-span-2">
-          <FormField
-            v-slot="{ handleChange,handleBlur }"
-            name="backupPath"
-          >
-            <FormItem>
-              <FormLabel>Backup file</FormLabel>
-              <FormControl>
-                <Input
-                  id="file_input"
-                  type="file"
-                  @change="handleChange"
-                  @blur="handleBlur"
-                />
-              </FormControl>
-              <FormDescription v-if="isFileSelected">
-                Archivo seleccionado {{values.backupPath?.path}}
-              </FormDescription>
               <FormMessage />
             </FormItem>
           </FormField>

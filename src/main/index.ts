@@ -5,7 +5,7 @@ import icon from '../../resources/icon.ico?asset'
 import { GlobalConfig } from './utils/restore/GlobalConfig'
 
 
-import { restoreDb, restoreFinishActions, createDb } from './utils/restore/restore-db'
+import { restoreDb, restoreFinishActions, createDb, backupDb } from './utils/restore/restore-db'
 import { findBinarys } from './utils/restore/binariesUtils'
 
 // @ts-ignore
@@ -29,8 +29,8 @@ function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     title: 'pgRestore',
-    width: 590,
-    height: 550,
+    width: 450,
+    height: 680,
     show: false,
     //resizable:false,
     autoHideMenuBar: true,
@@ -106,7 +106,13 @@ app.whenReady().then(() => {
 
   })
 
+  ipcMain.on('backup-db', (event, dbOptions) => {
+    backupDb(dbOptions, event)
+
+  })
+
   ipcMain.on('create-db', (event, dbOptions, createDbOptions) => {
+    console.log('create-db', dbOptions)
     createDb(dbOptions, createDbOptions, event)
 
   })

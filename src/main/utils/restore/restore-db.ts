@@ -2,6 +2,11 @@ import IpcMainEvent = Electron.IpcMainEvent;
 import {BrowserWindow, Notification} from "electron";
 import {spawn} from "child_process";
 import path from "node:path";
+import os from "node:os";
+import fs from "node:fs";
+
+
+
 
 type DbOtions = {
   dbName: string;
@@ -11,6 +16,7 @@ type DbOtions = {
   user: string;
   password: string;
   binary: string;
+  backUpName?:string;
 
 }
 
@@ -36,6 +42,57 @@ const restoreDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
   console.log(binary, paramsSplitted.join(" "));
 
   const bat = spawn(binary, paramsSplitted, {env: {...process.env, PGPASSWORD: password}});
+  getBrowserWindow(event)?.setProgressBar(2);
+  bat.stdout.setEncoding("utf8");
+  bat.stdout.on("data", (data: any) => {
+    console.log("data", data.toString());
+    event.sender.send("restore-logs", data.toString());
+  });
+  bat.stderr.setEncoding("utf8");
+  bat.stderr.on("data", (data: any) => {
+    console.log("error", data.toString());
+    event.sender.send("restore-logs", data.toString());
+  });
+
+  bat.on("exit", (code: any) => {
+    console.log(`Child exited with code ${code}`);
+    event.sender.send("restore-logs", `finish-OK`);
+  });
+  bat.on("error", (code: any) => {
+    console.log(`error ${code}`);
+    event.sender.send("restore-logs", `error ${code}`);
+  });
+};
+
+
+
+
+const backupDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
+  const {dbName, host, password, port, user,  binary} = dbOptions;
+
+
+
+  const backUpDir = path.join( os.homedir(), "pgRestore")
+  if(!fs.existsSync(backUpDir)){
+    fs.mkdirSync(backUpDir);
+  }
+  const backupFullName = `${dbName}_${new Date().toLocaleDateString('en-CA')}.backup`;
+  const backupPath = path.join( backUpDir, backupFullName)
+
+  //const params = `-F c --host ${host} --port ${port} --username ${user} --role postgres --dbname ${dbName}`;
+  const params = `--file ${path.normalize(backupPath)} --host ${host} --port ${port} --username ${user} --format=c --large-objects --verbose ${dbName}`;
+
+  console.log(params);
+  console.log(backupFullName);
+  console.log(backupPath);
+  const paramsSplitted = params.toString().split(" ");
+  //paramsSplitted.push(path.normalize(backupPath));
+
+
+
+  const exe = path.join(path.dirname(binary),'pg_dump.exe');
+  console.log(exe, paramsSplitted);
+  const bat = spawn(exe, paramsSplitted, {env: {...process.env, PGPASSWORD: password}});
   getBrowserWindow(event)?.setProgressBar(2);
   bat.stdout.setEncoding("utf8");
   bat.stdout.on("data", (data: any) => {
@@ -94,7 +151,7 @@ const createDb = (dbOptions: DbOtions,createDbOptions:CreateDebOptions, event: I
   getBrowserWindow(event)?.setProgressBar(2);
 
   bat.stdout.setEncoding("utf8");
-
+  console.log('va a ejecutar')
   bat.stdout.on("data", (data: any) => {
     console.log("data", data.toString());
     event.sender.send("restore-logs", data.toString());
@@ -135,4 +192,4 @@ const getBrowserWindow = (event: IpcMainEvent): BrowserWindow | null => {
   return BrowserWindow.fromWebContents(event.sender);
 };
 
-export {restoreDb, restoreFinishActions, createDb};
+export {restoreDb, restoreFinishActions, createDb,backupDb};
