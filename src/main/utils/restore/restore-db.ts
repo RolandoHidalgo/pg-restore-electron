@@ -4,11 +4,12 @@ import {spawn} from "child_process";
 import path from "node:path";
 import os from "node:os";
 import fs from "node:fs";
+import {DataSource} from "./dataSourceUtils";
 
 
 
 
-type DbOtions = {
+export type DbOtions = {
   dbName: string;
   port: string;
   host: string;
@@ -17,7 +18,7 @@ type DbOtions = {
   password: string;
   binary: string;
   backUpName?:string;
-
+  datasource?:string;
 }
 
 type CreateDebOptions = {
@@ -66,7 +67,18 @@ const restoreDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
 
 
 
+function getFormattedDateTime() {
+  const now = new Date();
 
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+
+  return `${year}_${month}_${day}_${hours}${minutes}`;
+}
 const backupDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
   const {dbName, host, password, port, user,  binary} = dbOptions;
 
@@ -76,11 +88,11 @@ const backupDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
   if(!fs.existsSync(backUpDir)){
     fs.mkdirSync(backUpDir);
   }
-  const backupFullName = `${dbName}_${new Date().toLocaleDateString('en-CA')}.backup`;
+  const backupFullName = `${dbName}_${getFormattedDateTime()}.backup`;
   const backupPath = path.join( backUpDir, backupFullName)
 
   //const params = `-F c --host ${host} --port ${port} --username ${user} --role postgres --dbname ${dbName}`;
-  const params = `--file ${path.normalize(backupPath)} --host ${host} --port ${port} --username ${user} --format=c --large-objects --verbose ${dbName}`;
+  const params = `--file ${path.normalize(backupPath)} --host ${host} --port ${port} --username ${user} --format=c --verbose ${dbName}`;
 
   console.log(params);
   console.log(backupFullName);
@@ -90,7 +102,7 @@ const backupDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
 
 
 
-  const exe = path.join(path.dirname(binary),'pg_dump.exe');
+  const exe = path.join(binary,'pg_dump.exe');
   console.log(exe, paramsSplitted);
   const bat = spawn(exe, paramsSplitted, {env: {...process.env, PGPASSWORD: password}});
   getBrowserWindow(event)?.setProgressBar(2);

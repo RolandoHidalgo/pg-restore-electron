@@ -1,15 +1,40 @@
-import { contextBridge, ipcRenderer, webUtils } from 'electron'
-import { electronAPI } from '@electron-toolkit/preload'
+import {contextBridge, ipcRenderer, webUtils} from 'electron'
+import {electronAPI} from '@electron-toolkit/preload'
+import {DataSource, getDatasources} from "../main/utils/restore/dataSourceUtils";
+import {DbOtions} from "../main/utils/restore/restore-db";
+import path from "path";
 
 const api = {
   restoreDb: (dbOptions) => ipcRenderer.send('restore-db', dbOptions),
-  backupDb: (dbOptions) => ipcRenderer.send('backup-db', dbOptions),
+  backupDb: (dbOptions: DbOtions) => {
+    console.log(dbOptions,'optionss1');
+    const ds: DataSource | undefined = getDatasources().filter(e => e.name === dbOptions.datasource)[0];
+    console.log(ds,'el ds');
+    dbOptions.user = ds?.username;
+    dbOptions.password = ds?.password;
+    dbOptions.host = ds?.host;
+    dbOptions.binary = ds?.binary;
+    dbOptions.port = ds?.port;
+    console.log(dbOptions,'optionss');
+    ipcRenderer.send('backup-db', dbOptions)
+  },
+  addDatasource: (dbOptions: DbOtions) => {
+    const ds: DataSource = {
+      name: dbOptions.dbName,
+      binary: path.dirname(dbOptions.binary),
+      password: dbOptions.password,
+      port: Number(dbOptions.port),
+      host: dbOptions.host,
+      username: dbOptions.user
+    }
+    ipcRenderer.send('add-datasource', ds)
+  },
   showFilePath(file) {
     // It's best not to expose the full file path to the web content if
     // possible.
-   return webUtils.getPathForFile(file)
+    return webUtils.getPathForFile(file)
 
-   // alert(`Uploaded file path was: ${path}`)
+    // alert(`Uploaded file path was: ${path}`)
   },
   createDb: (dbOptions, createDbOptions) =>
     ipcRenderer.send('create-db', dbOptions, createDbOptions),
@@ -19,6 +44,7 @@ const api = {
 
   handleUpdateInfo: (callback) => ipcRenderer.on('update-logs', callback),
   getBinaries: () => ipcRenderer.invoke('get-binaries'),
+  getDatasource: () => ipcRenderer.invoke('get-datasource'),
   checkUpdate: () => ipcRenderer.send('check-update'),
   getFileArg: () => {
     return ipcRenderer.invoke('file-args')

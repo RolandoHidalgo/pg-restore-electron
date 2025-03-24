@@ -29,6 +29,7 @@ import RestoreConsole from './restore-console.vue'
 import { Switch } from '@renderer/components/ui/switch'
 import NewDbForm from './NewDbForm.vue'
 import { FormDescription } from './ui/form'
+import DatasourceSelect from "@renderer/components/DatasourceSelect.vue";
 
 const isOpenDialog = ref(false)
 

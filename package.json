@@ -24,7 +24,11 @@
     "build:linux": "npm run build && electron-builder --linux --config"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["electron","esbuild","vue-demi"]
+    "onlyBuiltDependencies": [
+      "electron",
+      "esbuild",
+      "vue-demi"
+    ]
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
@@ -42,6 +46,7 @@
     "electron-updater": "^6.3.9",
     "lucide-vue-next": "^0.447.0",
     "radix-vue": "^1.9.6",
+    "rc9": "^2.1.2",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "vaul-vue": "^0.2.0",

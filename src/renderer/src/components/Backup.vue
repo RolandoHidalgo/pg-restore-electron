@@ -32,6 +32,7 @@ import RestoreConsole from './restore-console.vue'
 import { Switch } from '@renderer/components/ui/switch'
 import NewDbForm from './NewDbForm.vue'
 import { FormDescription } from './ui/form'
+import DatasourceSelect from "@renderer/components/DatasourceSelect.vue";
 
 
 const isOpenDialog = ref(false)
@@ -39,26 +40,10 @@ const isOpenDialog = ref(false)
 
 
 const coneccionSchema = z.object({
-  binary: z
+  datasource: z
     .string({
       required_error: 'Requerido.'
     }),
-  password: z
-    .string({
-      required_error: 'Requerido.'
-    }).min(1, { message: 'no vacio' }),
-  user: z
-    .string({
-      required_error: 'Requerido.'
-    }).min(1, { message: 'no vacio' }),
-  host: z
-    .string({
-      required_error: 'Requerido.'
-    }).min(1, { message: 'no vacio' }),
-  port: z
-    .string({
-      required_error: 'Requerido.'
-    }).min(1, { message: 'no vacio' }),
   dbName: z
     .string({
       required_error: 'Requerido.'
@@ -111,8 +96,9 @@ const onSubmit = handleSubmit((values) => {
       <CardContent class="grid grid-cols-2 gap-4 overflow-y-auto h-[60dvh]">
 
 
+
         <div>
-          <BinarySelect />
+          <DatasourceSelect/>
         </div>
         <div>
           <FormField
@@ -121,75 +107,6 @@ const onSubmit = handleSubmit((values) => {
           >
             <FormItem>
               <FormLabel>DB</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  v-bind="componentField"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
-        </div>
-        <div>
-          <FormField
-            v-slot="{ componentField }"
-            name="password"
-          >
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  v-bind="componentField"
-                />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          </FormField>
-        </div>
-        <div>
-          <FormField
-            v-slot="{ componentField }"
-            name="user"
-          >
-            <FormItem>
-              <FormLabel>User</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  v-bind="componentField"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
-        </div>
-        <div>
-          <FormField
-            v-slot="{ componentField }"
-            name="host"
-          >
-            <FormItem>
-              <FormLabel>Host</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  v-bind="componentField"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
-        </div>
-        <div>
-          <FormField
-            v-slot="{ componentField }"
-            name="port"
-          >
-            <FormItem>
-              <FormLabel>Port</FormLabel>
               <FormControl>
                 <Input
                   type="text"

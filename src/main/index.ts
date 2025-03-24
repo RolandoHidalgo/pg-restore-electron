@@ -1,18 +1,19 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'node:path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import {app, shell, BrowserWindow, ipcMain} from 'electron'
+import {join} from 'node:path'
+import {electronApp, optimizer, is} from '@electron-toolkit/utils'
 import icon from '../../resources/icon.ico?asset'
-import { GlobalConfig } from './utils/restore/GlobalConfig'
+import {GlobalConfig} from './utils/restore/GlobalConfig'
 
 
-import { restoreDb, restoreFinishActions, createDb, backupDb } from './utils/restore/restore-db'
-import { findBinarys } from './utils/restore/binariesUtils'
+import {restoreDb, restoreFinishActions, createDb, backupDb} from './utils/restore/restore-db'
+import {findBinarys} from './utils/restore/binariesUtils'
 
 // @ts-ignore
-import { handleSquirell } from './utils/restore/regeditUtils'
+import {handleSquirell} from './utils/restore/regeditUtils'
 
 import log from 'electron-log'
-import { autoUpdater } from 'electron-updater'
+import {autoUpdater} from 'electron-updater'
+import {addDatasources, DataSource, getDatasources} from "./utils/restore/dataSourceUtils";
 
 autoUpdater.logger = log
 autoUpdater.logger.transports.file.level = 'info'
@@ -34,38 +35,38 @@ function createWindow(): void {
     show: false,
     //resizable:false,
     autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
+    ...(process.platform === 'linux' ? {icon} : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     }
   })
 
-  function sendStatusToWindow(updateEvent, text ) {
+  function sendStatusToWindow(updateEvent, text) {
     log.info(text)
-    mainWindow.webContents.send('update-logs', { updateEvent, text })
+    mainWindow.webContents.send('update-logs', {updateEvent, text})
   }
 
   autoUpdater.on('checking-for-update', () => {
-    sendStatusToWindow('Checking','Checking')
+    sendStatusToWindow('Checking', 'Checking')
   })
   autoUpdater.on('update-available', (info) => {
-    sendStatusToWindow('Update_available.','Update_available.')
+    sendStatusToWindow('Update_available.', 'Update_available.')
   })
   autoUpdater.on('update-not-available', (info) => {
-    sendStatusToWindow('Update_not_available','Update_not_available')
+    sendStatusToWindow('Update_not_available', 'Update_not_available')
   })
   autoUpdater.on('error', (err) => {
-    sendStatusToWindow('Error','Error')
+    sendStatusToWindow('Error', 'Error')
   })
   autoUpdater.on('download-progress', (progressObj) => {
     let log_message = 'Download speed: ' + progressObj.bytesPerSecond
     log_message = log_message + ' - Downloaded ' + progressObj.percent + '%'
     log_message = log_message + ' (' + progressObj.transferred + '/' + progressObj.total + ')'
-    sendStatusToWindow('progress',log_message)
+    sendStatusToWindow('progress', log_message)
   })
   autoUpdater.on('update-downloaded', (info) => {
-    sendStatusToWindow('Update_downloaded','Update_downloaded')
+    sendStatusToWindow('Update_downloaded', 'Update_downloaded')
   })
 
   mainWindow.on('ready-to-show', () => {
@@ -74,7 +75,7 @@ function createWindow(): void {
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
-    return { action: 'deny' }
+    return {action: 'deny'}
   })
 
   // HMR for renderer base on electron-vite cli.
@@ -117,6 +118,11 @@ app.whenReady().then(() => {
 
   })
 
+  ipcMain.on('add-datasource', (event, ds: DataSource) => {
+    addDatasources(ds)
+  })
+
+
   ipcMain.on('check-update', (event) => {
     autoUpdater.checkForUpdatesAndNotify()
 
@@ -145,9 +151,24 @@ app.whenReady().then(() => {
 
 
   })
-  createWindow()
 
-  app.on('activate', function() {
+  ipcMain.handle('get-datasource', (): DataSource[] => {
+
+    return getDatasources();
+
+
+  })
+  createWindow()
+  // addDatasources({
+  //   host:'localhost',
+  //   port:5433,
+  //   username:'postgres',
+  //   password:'postgres',
+  //   binary:'C:\\Program Files\\PostgreSQL\\13\\bin',
+  //   name:'local'
+  // })
+  // console.log('asdasdldldldldle3333',getDatasources())
+  app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
@@ -162,7 +183,6 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
-
 
 
 // In this file you can include the rest of your app"s specific main process
