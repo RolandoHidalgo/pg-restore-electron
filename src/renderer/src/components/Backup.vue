@@ -102,7 +102,7 @@ const onSubmit = handleSubmit((values) => {
     <Card class="flex flex-col grow justify-between">
       <CardHeader>
         <CardTitle>
-          Restaurar backup
+          Crear backup
         </CardTitle>
         <CardDescription>
           Entre los parámetros de conexión.
@@ -207,7 +207,7 @@ const onSubmit = handleSubmit((values) => {
           class="w-full"
           type="submit"
         >
-          Restore Backup
+          Crear Backup
         </Button>
       </CardFooter>
     </Card>
