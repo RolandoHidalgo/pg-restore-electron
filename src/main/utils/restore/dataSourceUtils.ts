@@ -21,17 +21,21 @@ const getDatasources = (): DataSource[] => {
   return config.datasources ?? [];
 }
 
+const getDatasource = (name: string) => {
+  return getDatasources().filter(e => e.name === name)[0];
+}
+
 
 const addDatasources = (ds: DataSource): void => {
   const config = read(rc)
-  if(!config.datasources) {
+  if (!config.datasources) {
     config.datasources = [];
     write(config, rc);
   }
- // update({ 'config.datasources[]': ds },rc)
+  // update({ 'config.datasources[]': ds },rc)
   config.datasources.push(ds);
-  console.log(config.datasources,'asdasd')
+  console.log(config.datasources, 'asdasd')
   write(config, rc);
 }
 
-export {getDatasources, addDatasources};
+export {getDatasources, addDatasources,getDatasource};

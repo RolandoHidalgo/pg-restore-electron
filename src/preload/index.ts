@@ -45,6 +45,10 @@ const api = {
   handleUpdateInfo: (callback) => ipcRenderer.on('update-logs', callback),
   getBinaries: () => ipcRenderer.invoke('get-binaries'),
   getDatasource: () => ipcRenderer.invoke('get-datasource'),
+  getDbs: async (name:string) => {
+    console.log('allamar con name',name)
+    return ipcRenderer.invoke('get-dbs',name)
+  },
   checkUpdate: () => ipcRenderer.send('check-update'),
   getFileArg: () => {
     return ipcRenderer.invoke('file-args')

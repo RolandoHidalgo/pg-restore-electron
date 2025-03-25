@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 
-import { Button } from '@renderer/components/ui/button'
+import {Button} from '@renderer/components/ui/button'
 import {
   Card,
   CardContent,
@@ -10,16 +10,16 @@ import {
   CardHeader,
   CardTitle
 } from '@renderer/components/ui/card'
-import { Input } from '@renderer/components/ui/input'
-import { Label } from '@renderer/components/ui/label'
+import {Input} from '@renderer/components/ui/input'
+import {Label} from '@renderer/components/ui/label'
 
 
-import { computed, onBeforeMount, ref } from 'vue'
+import {computed, onBeforeMount, ref} from 'vue'
 import BinarySelect from './BinarySelect.vue'
-import { useForm } from 'vee-validate'
-import { z } from 'zod'
-import { toTypedSchema } from '@vee-validate/zod'
-import { FormControl, FormItem, FormLabel, FormMessage, FormField } from '@renderer/components/ui/form'
+import {useForm} from 'vee-validate'
+import {z} from 'zod'
+import {toTypedSchema} from '@vee-validate/zod'
+import {FormControl, FormItem, FormLabel, FormMessage, FormField} from '@renderer/components/ui/form'
 
 import {
   DialogContent,
@@ -29,14 +29,14 @@ import {
 
 } from './ui/dialog'
 import RestoreConsole from './restore-console.vue'
-import { Switch } from '@renderer/components/ui/switch'
+import {Switch} from '@renderer/components/ui/switch'
 import NewDbForm from './NewDbForm.vue'
-import { FormDescription } from './ui/form'
+import {FormDescription} from './ui/form'
 import DatasourceSelect from "@renderer/components/DatasourceSelect.vue";
+import DbSelect from "@renderer/components/DbSelect.vue";
 
 
 const isOpenDialog = ref(false)
-
 
 
 const coneccionSchema = z.object({
@@ -47,9 +47,8 @@ const coneccionSchema = z.object({
   dbName: z
     .string({
       required_error: 'Requerido.'
-    }).min(1, { message: 'no vacio' })
+    }).min(1, {message: 'no vacio'})
 })
-
 
 
 const initVals = {
@@ -61,7 +60,7 @@ const initVals = {
 const fileRef = ref();
 
 
-const { handleSubmit, values } = useForm({
+const {handleSubmit, values} = useForm({
   validationSchema: computed(() => toTypedSchema(coneccionSchema.passthrough())),
   initialValues: initVals,
   keepValuesOnUnmount: true
@@ -71,7 +70,7 @@ const { handleSubmit, values } = useForm({
 const onSubmit = handleSubmit((values) => {
   console.log(values, 'asdfsdfsf')
   isOpenDialog.value = true
-  const formValues = { ...values,backupPath: '' }
+  const formValues = {...values, backupPath: ''}
   window.electron.backupDb(formValues)
 })
 
@@ -96,26 +95,26 @@ const onSubmit = handleSubmit((values) => {
       <CardContent class="grid grid-cols-2 gap-4 overflow-y-auto h-[60dvh]">
 
 
-
         <div>
           <DatasourceSelect/>
         </div>
         <div>
-          <FormField
-            v-slot="{ componentField }"
-            name="dbName"
-          >
-            <FormItem>
-              <FormLabel>DB</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  v-bind="componentField"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
+          <!--          <FormField-->
+          <!--            v-slot="{ componentField }"-->
+          <!--            name="dbName"-->
+          <!--          >-->
+          <!--            <FormItem>-->
+          <!--              <FormLabel>DB</FormLabel>-->
+          <!--              <FormControl>-->
+          <!--                <Input-->
+          <!--                  type="text"-->
+          <!--                  v-bind="componentField"-->
+          <!--                />-->
+          <!--              </FormControl>-->
+          <!--              <FormMessage />-->
+          <!--            </FormItem>-->
+          <!--          </FormField>-->
+          <DbSelect :ds-name="values.datasource ?? ''"/>
         </div>
 
       </CardContent>
@@ -134,7 +133,7 @@ const onSubmit = handleSubmit((values) => {
           <DialogTitle>Logs</DialogTitle>
         </DialogHeader>
         <div class="grid gap-4 py-4">
-          <RestoreConsole />
+          <RestoreConsole/>
         </div>
       </DialogContent>
     </Dialog>

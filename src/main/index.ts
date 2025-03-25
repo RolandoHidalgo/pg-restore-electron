@@ -5,7 +5,7 @@ import icon from '../../resources/icon.ico?asset'
 import {GlobalConfig} from './utils/restore/GlobalConfig'
 
 
-import {restoreDb, restoreFinishActions, createDb, backupDb} from './utils/restore/restore-db'
+import {restoreDb, restoreFinishActions, createDb, backupDb, getDatabaseByDatasource} from './utils/restore/restore-db'
 import {findBinarys} from './utils/restore/binariesUtils'
 
 // @ts-ignore
@@ -148,6 +148,12 @@ app.whenReady().then(() => {
   ipcMain.handle('get-binaries', () => {
 
     return postgresBinaries
+
+
+  })
+  ipcMain.handle('get-dbs', async (event,name:string) => {
+    console.log('main con name',name)
+    return getDatabaseByDatasource(name)
 
 
   })

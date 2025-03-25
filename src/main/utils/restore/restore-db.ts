@@ -1,12 +1,11 @@
 import IpcMainEvent = Electron.IpcMainEvent;
 import {BrowserWindow, Notification} from "electron";
-import {spawn} from "child_process";
+
 import path from "node:path";
 import os from "node:os";
 import fs from "node:fs";
-import {DataSource} from "./dataSourceUtils";
-
-
+import {DataSource, getDatasource, getDatasources} from "./dataSourceUtils";
+import {exec, spawn} from "node:child_process";
 
 
 export type DbOtions = {
@@ -17,8 +16,8 @@ export type DbOtions = {
   user: string;
   password: string;
   binary: string;
-  backUpName?:string;
-  datasource?:string;
+  backUpName?: string;
+  datasource?: string;
 }
 
 type CreateDebOptions = {
@@ -66,7 +65,6 @@ const restoreDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
 };
 
 
-
 function getFormattedDateTime() {
   const now = new Date();
 
@@ -79,17 +77,59 @@ function getFormattedDateTime() {
 
   return `${year}_${month}_${day}_${hours}${minutes}`;
 }
+
+function listDatabases(user: string, password: string, host: string, port: number): Promise<string[]> {
+  // Replace 'your_username' and 'your_password' with your credentials
+
+  console.log('listar con allamar con name', password);
+  return new Promise((resolve, reject) => {
+    const command = `"C:\\Program Files\\PostgreSQL\\13\\bin\\psql.exe" -U ${user} --host ${host} --port ${port} -c "\\l"`;
+
+    // Execute the psql command
+    exec(command, {env: {PGPASSWORD: password}}, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error: ${error.message}`);
+        reject(error.message);
+        return;
+      }
+
+      if (stderr) {
+        console.error(`stderr: ${stderr}`);
+        reject(stderr);
+        return;
+      }
+
+      // Process and print the output
+      console.log('Available Databases:');
+      const lines = stdout.split('\n')
+        .filter(line => line.includes('|'))
+        .map(line => line.split('|')[0].trim())
+        .filter(line => line !== '' && line !== 'template0' && line !== 'template1')
+        .splice(1);
+      resolve(lines);
+
+      console.log(lines);
+
+    });
+  })
+
+}
+
+const getDatabaseByDatasource = async (dataSourceName: string): Promise<string[]> => {
+  console.log('restore con con name', dataSourceName)
+  const ds: DataSource = getDatasource(dataSourceName);
+  return listDatabases(ds.username, ds.password, ds.host,ds.port);
+}
 const backupDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
-  const {dbName, host, password, port, user,  binary} = dbOptions;
+  const {dbName, host, password, port, user, binary} = dbOptions;
 
 
-
-  const backUpDir = path.join( os.homedir(), "pgRestore")
-  if(!fs.existsSync(backUpDir)){
+  const backUpDir = path.join(os.homedir(), "pgRestore")
+  if (!fs.existsSync(backUpDir)) {
     fs.mkdirSync(backUpDir);
   }
   const backupFullName = `${dbName}_${getFormattedDateTime()}.backup`;
-  const backupPath = path.join( backUpDir, backupFullName)
+  const backupPath = path.join(backUpDir, backupFullName)
 
   //const params = `-F c --host ${host} --port ${port} --username ${user} --role postgres --dbname ${dbName}`;
   const params = `--file ${path.normalize(backupPath)} --host ${host} --port ${port} --username ${user} --format=c --verbose ${dbName}`;
@@ -101,8 +141,7 @@ const backupDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
   //paramsSplitted.push(path.normalize(backupPath));
 
 
-
-  const exe = path.join(binary,'pg_dump.exe');
+  const exe = path.join(binary, 'pg_dump.exe');
   console.log(exe, paramsSplitted);
   const bat = spawn(exe, paramsSplitted, {env: {...process.env, PGPASSWORD: password}});
   getBrowserWindow(event)?.setProgressBar(2);
@@ -128,7 +167,7 @@ const backupDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
 };
 
 
-const createDb = (dbOptions: DbOtions,createDbOptions:CreateDebOptions, event: IpcMainEvent) => {
+const createDb = (dbOptions: DbOtions, createDbOptions: CreateDebOptions, event: IpcMainEvent) => {
 
   const {dbName, host, password, port, user, binary} = dbOptions;
 
@@ -151,15 +190,15 @@ const createDb = (dbOptions: DbOtions,createDbOptions:CreateDebOptions, event: I
     params += ` --template ${createDbOptions.template}`
   }
 
-  params+= ` ${dbName}`
+  params += ` ${dbName}`
 
   const paramsSplitted = params.toString().split(" ");
 
-  const exe = path.join(path.dirname(binary),'createdb.exe');
-  console.log( exe,paramsSplitted.join(" "));
+  const exe = path.join(path.dirname(binary), 'createdb.exe');
+  console.log(exe, paramsSplitted.join(" "));
   console.log(createDbOptions);
 
-  const bat = spawn(exe, paramsSplitted, { env: { ...process.env, PGPASSWORD: password } });
+  const bat = spawn(exe, paramsSplitted, {env: {...process.env, PGPASSWORD: password}});
   getBrowserWindow(event)?.setProgressBar(2);
 
   bat.stdout.setEncoding("utf8");
@@ -177,7 +216,7 @@ const createDb = (dbOptions: DbOtions,createDbOptions:CreateDebOptions, event: I
   bat.on("exit", (code: any) => {
     console.log(`Child exited with code ${code}`);
     event.sender.send("restore-logs", `finish-OK`);
-    restoreDb(dbOptions,event);
+    restoreDb(dbOptions, event);
   });
   bat.on("error", (code: any) => {
     console.log(`error ${code}`);
@@ -204,4 +243,4 @@ const getBrowserWindow = (event: IpcMainEvent): BrowserWindow | null => {
   return BrowserWindow.fromWebContents(event.sender);
 };
 
-export {restoreDb, restoreFinishActions, createDb,backupDb};
+export {restoreDb, restoreFinishActions, createDb, backupDb, getDatabaseByDatasource};
