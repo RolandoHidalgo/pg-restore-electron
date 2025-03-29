@@ -5,7 +5,18 @@ import {DbOtions} from "../main/utils/restore/restore-db";
 import path from "path";
 
 const api = {
-  restoreDb: (dbOptions) => ipcRenderer.send('restore-db', dbOptions),
+  restoreDb: (dbOptions) => {
+    const ds: DataSource | undefined = getDatasources().filter(e => e.name === dbOptions.datasource)[0];
+
+    dbOptions.user = ds?.username;
+    dbOptions.password = ds?.password;
+    dbOptions.host = ds?.host;
+    dbOptions.binary = ds?.binary;
+    dbOptions.port = ds?.port;
+    console.log(dbOptions,'optionss');
+    return ipcRenderer.send('restore-db', dbOptions);
+  },
+  sincronizarUsb: (usbDrive:string) => ipcRenderer.send('sincronizar-usb', usbDrive),
   backupDb: (dbOptions: DbOtions) => {
     console.log(dbOptions,'optionss1');
     const ds: DataSource | undefined = getDatasources().filter(e => e.name === dbOptions.datasource)[0];
@@ -18,7 +29,7 @@ const api = {
     console.log(dbOptions,'optionss');
     ipcRenderer.send('backup-db', dbOptions)
   },
-  addDatasource: (dbOptions: DbOtions) => {
+  addDatasource: async (dbOptions: DbOtions) => {
     const ds: DataSource = {
       name: dbOptions.dbName,
       binary: path.dirname(dbOptions.binary),
@@ -27,7 +38,8 @@ const api = {
       host: dbOptions.host,
       username: dbOptions.user
     }
-    ipcRenderer.send('add-datasource', ds)
+
+    return ipcRenderer.invoke('add-datasource', ds)
   },
   showFilePath(file) {
     // It's best not to expose the full file path to the web content if
@@ -36,14 +48,27 @@ const api = {
 
     // alert(`Uploaded file path was: ${path}`)
   },
-  createDb: (dbOptions, createDbOptions) =>
-    ipcRenderer.send('create-db', dbOptions, createDbOptions),
+  createDb: (dbOptions, createDbOptions) =>{
+
+    const ds: DataSource | undefined = getDatasources().filter(e => e.name === dbOptions.datasource)[0];
+
+    dbOptions.user = ds?.username;
+    dbOptions.password = ds?.password;
+    dbOptions.host = ds?.host;
+    dbOptions.binary = ds?.binary;
+    dbOptions.port = ds?.port;
+    console.log(dbOptions,'optionss');
+    return ipcRenderer.send('create-db', dbOptions, createDbOptions)
+  },
+
   restoreFinish: () => ipcRenderer.send('restore-finish'),
   //updateInfo: (event,data) => ipcRenderer.send(event,data),
   handleRestoreConsoleEvent: (callback) => ipcRenderer.on('restore-logs', callback),
+  handleSyncEvent: (callback) => ipcRenderer.on('sync-logs', callback),
 
   handleUpdateInfo: (callback) => ipcRenderer.on('update-logs', callback),
   getBinaries: () => ipcRenderer.invoke('get-binaries'),
+  getDrives: () => ipcRenderer.invoke('get-drives'),
   getDatasource: () => ipcRenderer.invoke('get-datasource'),
   getDbs: async (name:string) => {
     console.log('allamar con name',name)

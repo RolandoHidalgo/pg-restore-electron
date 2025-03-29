@@ -27,14 +27,18 @@ const getDatasource = (name: string) => {
 
 
 const addDatasources = (ds: DataSource): void => {
-  const config = read(rc)
+   const config = read(rc)
   if (!config.datasources) {
     config.datasources = [];
     write(config, rc);
   }
-  // update({ 'config.datasources[]': ds },rc)
-  config.datasources.push(ds);
-  console.log(config.datasources, 'asdasd')
+  const index = config.datasources.findIndex(e => e.name === ds.name);
+  if (index >= 0) {
+    config.datasources[index] = ds;
+  }
+  else {
+    config.datasources.push(ds);
+  }
   write(config, rc);
 }
 

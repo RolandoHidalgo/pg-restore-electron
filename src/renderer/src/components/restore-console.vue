@@ -26,8 +26,10 @@ function updateScroll() {
 <template>
 
   <div>
-    <div class="console" id="console">
-      <p v-for="m in  messages">{{ m }}</p>
+    <div class="console break-all" id="console">
+      <p
+        class="mx-0"
+        v-for="m in  messages" >{{ m }}</p>
     </div>
   </div>
 </template>
@@ -38,6 +40,7 @@ function updateScroll() {
   background-color: #2b2b2b;
   min-height: 300px;
   max-height: 300px;
+  max-width: 100%;
   overflow: auto;
   color: #f5fff2;
 }

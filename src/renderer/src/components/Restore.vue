@@ -12,7 +12,7 @@ import { Input } from '@renderer/components/ui/input'
 import { Label } from '@renderer/components/ui/label'
 
 import { computed, onBeforeMount, ref } from 'vue'
-import BinarySelect from './BinarySelect.vue'
+
 import { useForm } from 'vee-validate'
 import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
@@ -54,32 +54,13 @@ const newDbSchema = z.object({
 })
 
 const coneccionSchema = z.object({
-  binary: z.string({
-    required_error: 'Requerido.'
-  }),
-  password: z
+  datasource: z
     .string({
       required_error: 'Requerido.'
-    })
-    .min(1, { message: 'no vacio' }),
-  user: z
-    .string({
-      required_error: 'Requerido.'
-    })
-    .min(1, { message: 'no vacio' }),
+    }),
   backupPath: z.record(z.string(), z.any(), {
     required_error: 'seleccione un backup'
   }),
-  host: z
-    .string({
-      required_error: 'Requerido.'
-    })
-    .min(1, { message: 'no vacio' }),
-  port: z
-    .string({
-      required_error: 'Requerido.'
-    })
-    .min(1, { message: 'no vacio' }),
   dbName: z
     .string({
       required_error: 'Requerido.'
@@ -146,7 +127,7 @@ const isFileSelected = computed(() => {
       </CardHeader>
       <CardContent class="grid grid-cols-2 gap-4 overflow-y-auto h-[60dvh]">
         <div>
-          <BinarySelect />
+          <DatasourceSelect/>
         </div>
         <div>
           <FormField v-slot="{ componentField }" name="dbName">
@@ -164,51 +145,9 @@ const isFileSelected = computed(() => {
           </FormField>
         </div>
         <NewDbForm v-if="newDb" />
-        <div>
-          <FormField v-slot="{ componentField }" name="password">
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input type="text" v-bind="componentField" />
-              </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          </FormField>
-        </div>
-        <div>
-          <FormField v-slot="{ componentField }" name="user">
-            <FormItem>
-              <FormLabel>User</FormLabel>
-              <FormControl>
-                <Input type="text" v-bind="componentField" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
-        </div>
-        <div>
-          <FormField v-slot="{ componentField }" name="host">
-            <FormItem>
-              <FormLabel>Host</FormLabel>
-              <FormControl>
-                <Input type="text" v-bind="componentField" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
-        </div>
-        <div>
-          <FormField v-slot="{ componentField }" name="port">
-            <FormItem>
-              <FormLabel>Port</FormLabel>
-              <FormControl>
-                <Input type="text" v-bind="componentField" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
-        </div>
+
+
         <div class="col-span-2">
           <FormField v-slot="{ handleChange, handleBlur }" name="backupPath">
             <FormItem>
@@ -228,7 +167,7 @@ const isFileSelected = computed(() => {
         <Button class="w-full" type="submit"> Restore Backup </Button>
       </CardFooter>
     </Card>
-    <Dialog v-model:open="isOpenDialog">
+    <Dialog v-model:open="isOpenDialog" modal>
       <DialogContent class="sm:max-w-[475px]">
         <DialogHeader>
           <DialogTitle>Logs</DialogTitle>

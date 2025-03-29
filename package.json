@@ -1,6 +1,6 @@
 {
   "name": "PgUiRestore",
-  "version": "1.5.1",
+  "version": "1.6.1",
   "description": "An Electron application with Vue and TypeScript",
   "main": "./out/main/index.js",
   "author": "RolandoHidalgo",
@@ -28,6 +28,7 @@
       "electron",
       "esbuild",
       "vue-demi"
+
     ]
   },
   "dependencies": {
@@ -49,6 +50,7 @@
     "rc9": "^2.1.2",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
+    "usb": "^2.15.0",
     "vaul-vue": "^0.2.0",
     "vee-validate": "^4.13.2",
     "vue-i18n": "9",

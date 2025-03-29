@@ -7,14 +7,20 @@ import {GlobalConfig} from './utils/restore/GlobalConfig'
 
 import {restoreDb, restoreFinishActions, createDb, backupDb, getDatabaseByDatasource} from './utils/restore/restore-db'
 import {findBinarys} from './utils/restore/binariesUtils'
-
+import { initReposAndFolders, sincronizarUsb } from './utils/restore/gitUtils'
 // @ts-ignore
 import {handleSquirell} from './utils/restore/regeditUtils'
 
 import log from 'electron-log'
 import {autoUpdater} from 'electron-updater'
 import {addDatasources, DataSource, getDatasources} from "./utils/restore/dataSourceUtils";
+import { getUSBDrives } from './utils/restore/drivesUtils'
 
+try{
+  initReposAndFolders();
+}catch (e){
+  console.error(e)
+}
 autoUpdater.logger = log
 autoUpdater.logger.transports.file.level = 'info'
 
@@ -106,6 +112,10 @@ app.whenReady().then(() => {
     restoreDb(dbOptions, event)
 
   })
+  ipcMain.on('sincronizar-usb',async (event, usbDrive:string) => {
+
+    await sincronizarUsb(usbDrive,event)
+  })
 
   ipcMain.on('backup-db', (event, dbOptions) => {
     backupDb(dbOptions, event)
@@ -118,8 +128,8 @@ app.whenReady().then(() => {
 
   })
 
-  ipcMain.on('add-datasource', (event, ds: DataSource) => {
-    addDatasources(ds)
+  ipcMain.handle('add-datasource', async (event, ds: DataSource) => {
+    await addDatasources(ds)
   })
 
 
@@ -154,6 +164,12 @@ app.whenReady().then(() => {
   ipcMain.handle('get-dbs', async (event,name:string) => {
     console.log('main con name',name)
     return getDatabaseByDatasource(name)
+
+
+  })
+  ipcMain.handle('get-drives', async (event) => {
+
+    return getUSBDrives()
 
 
   })

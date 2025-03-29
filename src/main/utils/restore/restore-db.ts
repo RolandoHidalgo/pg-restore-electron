@@ -6,6 +6,7 @@ import os from "node:os";
 import fs from "node:fs";
 import {DataSource, getDatasource, getDatasources} from "./dataSourceUtils";
 import {exec, spawn} from "node:child_process";
+import { postBackupHook } from './gitUtils'
 
 
 export type DbOtions = {
@@ -40,8 +41,8 @@ const restoreDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
 
 
   console.log(binary, paramsSplitted.join(" "));
-
-  const bat = spawn(binary, paramsSplitted, {env: {...process.env, PGPASSWORD: password}});
+  const exe = path.join(binary, 'pg_restore.exe');
+  const bat = spawn(exe, paramsSplitted, {env: {...process.env, PGPASSWORD: password}});
   getBrowserWindow(event)?.setProgressBar(2);
   bat.stdout.setEncoding("utf8");
   bat.stdout.on("data", (data: any) => {
@@ -78,12 +79,12 @@ function getFormattedDateTime() {
   return `${year}_${month}_${day}_${hours}${minutes}`;
 }
 
-function listDatabases(user: string, password: string, host: string, port: number): Promise<string[]> {
+function listDatabases(user: string, password: string, host: string, port: number,binary:string): Promise<string[]> {
   // Replace 'your_username' and 'your_password' with your credentials
 
   console.log('listar con allamar con name', password);
   return new Promise((resolve, reject) => {
-    const command = `"C:\\Program Files\\PostgreSQL\\13\\bin\\psql.exe" -U ${user} --host ${host} --port ${port} -c "\\l"`;
+    const command = `"${binary}\\psql.exe" -U ${user} --host ${host} --port ${port} -c "\\l"`;
 
     // Execute the psql command
     exec(command, {env: {PGPASSWORD: password}}, (error, stdout, stderr) => {
@@ -118,13 +119,13 @@ function listDatabases(user: string, password: string, host: string, port: numbe
 const getDatabaseByDatasource = async (dataSourceName: string): Promise<string[]> => {
   console.log('restore con con name', dataSourceName)
   const ds: DataSource = getDatasource(dataSourceName);
-  return listDatabases(ds.username, ds.password, ds.host,ds.port);
+  return listDatabases(ds.username, ds.password, ds.host,ds.port,ds.binary);
 }
 const backupDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
   const {dbName, host, password, port, user, binary} = dbOptions;
 
 
-  const backUpDir = path.join(os.homedir(), "pgRestore")
+  const backUpDir = path.join(os.homedir(), "pgRestore","backups");
   if (!fs.existsSync(backUpDir)) {
     fs.mkdirSync(backUpDir);
   }
@@ -159,6 +160,7 @@ const backupDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
   bat.on("exit", (code: any) => {
     console.log(`Child exited with code ${code}`);
     event.sender.send("restore-logs", `finish-OK`);
+    postBackupHook()
   });
   bat.on("error", (code: any) => {
     console.log(`error ${code}`);
@@ -194,7 +196,7 @@ const createDb = (dbOptions: DbOtions, createDbOptions: CreateDebOptions, event:
 
   const paramsSplitted = params.toString().split(" ");
 
-  const exe = path.join(path.dirname(binary), 'createdb.exe');
+  const exe = path.join(binary, 'createdb.exe');
   console.log(exe, paramsSplitted.join(" "));
   console.log(createDbOptions);
 
