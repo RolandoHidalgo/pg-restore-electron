@@ -104,7 +104,7 @@ const onSubmit = handleSubmit((values) => {
 
   const formValues = {
     ...values,
-    backupPath: window.electron.showFilePath(fileInputElement.files[0])
+    backupPath:values?.backupPath?.path ?? window.electron.showFilePath(fileInputElement.files[0])
   }
   if (newDb.value) {
     window.electron.createDb(formValues, formValues)
