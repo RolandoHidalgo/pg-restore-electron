@@ -34,6 +34,7 @@ import NewDbForm from './NewDbForm.vue'
 import {FormDescription} from './ui/form'
 import DatasourceSelect from "@renderer/components/DatasourceSelect.vue";
 import DbSelect from "@renderer/components/DbSelect.vue";
+import DbSchemmSelect from "@renderer/components/DbSchemmSelect.vue";
 
 
 const isOpenDialog = ref(false)
@@ -44,6 +45,10 @@ const coneccionSchema = z.object({
     .string({
       required_error: 'Requerido.'
     }),
+  schemma: z
+    .string({
+      required_error: 'Requerido.'
+    }).optional(),
   dbName: z
     .string({
       required_error: 'Requerido.'
@@ -115,6 +120,9 @@ const onSubmit = handleSubmit((values) => {
           <!--            </FormItem>-->
           <!--          </FormField>-->
           <DbSelect :ds-name="values.datasource ?? ''"/>
+        </div>
+        <div>
+          <DbSchemmSelect :ds-name="values?.datasource ?? '' " :db-name="values?.dbName ?? ''"/>
         </div>
 
       </CardContent>

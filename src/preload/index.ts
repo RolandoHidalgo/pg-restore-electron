@@ -74,6 +74,10 @@ const api = {
     console.log('allamar con name',name)
     return ipcRenderer.invoke('get-dbs',name)
   },
+  getSchemmas: async (dsName:string,dbName:string) => {
+
+  return ipcRenderer.invoke('get-schemmas',dsName,dbName)
+},
   checkUpdate: () => ipcRenderer.send('check-update'),
   getFileArg: () => {
     return ipcRenderer.invoke('file-args')

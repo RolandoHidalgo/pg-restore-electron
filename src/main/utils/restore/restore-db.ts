@@ -6,7 +6,7 @@ import os from "node:os";
 import fs from "node:fs";
 import {DataSource, getDatasource, getDatasources} from "./dataSourceUtils";
 import {exec, spawn} from "node:child_process";
-import { postBackupHook } from './gitUtils'
+import {postBackupHook} from './gitUtils'
 
 
 export type DbOtions = {
@@ -19,6 +19,7 @@ export type DbOtions = {
   binary: string;
   backUpName?: string;
   datasource?: string;
+  schemma?: string;
 }
 
 type CreateDebOptions = {
@@ -79,7 +80,7 @@ function getFormattedDateTime() {
   return `${year}_${month}_${day}_${hours}${minutes}`;
 }
 
-function listDatabases(user: string, password: string, host: string, port: number,binary:string): Promise<string[]> {
+function listDatabases(user: string, password: string, host: string, port: number, binary: string): Promise<string[]> {
   // Replace 'your_username' and 'your_password' with your credentials
 
   console.log('listar con allamar con name', password);
@@ -116,24 +117,55 @@ function listDatabases(user: string, password: string, host: string, port: numbe
 
 }
 
+const obtenerEsquemas = (ds: DataSource, dbName: string): Promise<string[]> => {
+  return new Promise((resolve, reject) => {
+
+    const {port, password, binary, host, username} = ds;
+
+    exec(`"${binary}\\psql.exe" -U ${username} --host ${host} -d ${dbName} --port ${port} -c "\\dn"`, {env: {PGPASSWORD: password}}, (error, stdout, stderr) => {
+      if (error) {
+        return reject(`Error ejecutando el comando: ${error.message}`);
+      }
+      if (stderr) {
+        return reject(`Error en la salida estándar: ${stderr}`);
+      }
+
+      // Procesar la salida para extraer los nombres de los esquemas
+      const esquemas = stdout
+        .split('\n') // Dividir la salida por líneas
+        .slice(3, -3) // Ignorar encabezado y pie de página (ajusta según sea necesario)
+        .map((line) => line.split('|')[0].trim()); // Extraer y limpiar nombres
+
+      resolve(esquemas);
+    });
+  });
+};
 const getDatabaseByDatasource = async (dataSourceName: string): Promise<string[]> => {
   console.log('restore con con name', dataSourceName)
   const ds: DataSource = getDatasource(dataSourceName);
-  return listDatabases(ds.username, ds.password, ds.host,ds.port,ds.binary);
+  return listDatabases(ds.username, ds.password, ds.host, ds.port, ds.binary);
+}
+const getDatabaseSchamasByDatasourceAndDbName = async (dsName: string, dbName: string): Promise<string[]> => {
+
+  const ds: DataSource = getDatasource(dsName);
+  return obtenerEsquemas(ds, dbName);
 }
 const backupDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
-  const {dbName, host, password, port, user, binary} = dbOptions;
+  const {dbName, host, password, port, user, binary, schemma} = dbOptions;
 
 
-  const backUpDir = path.join(os.homedir(), "pgRestore","backups");
+  const backUpDir = path.join(os.homedir(), "pgRestore", "backups");
   if (!fs.existsSync(backUpDir)) {
     fs.mkdirSync(backUpDir);
   }
-  const backupFullName = `${dbName}_${getFormattedDateTime()}.backup`;
+
+  const schemmaName = (schemma && schemma != '') ? `_${schemma}` : '';
+  const schammaParams = (schemma && schemma != '') ? ` --schema "${schemma}"` : '';
+  const backupFullName = `${dbName}${schemmaName}_${getFormattedDateTime()}.backup`;
   const backupPath = path.join(backUpDir, backupFullName)
 
   //const params = `-F c --host ${host} --port ${port} --username ${user} --role postgres --dbname ${dbName}`;
-  const params = `--file ${path.normalize(backupPath)} --host ${host} --port ${port} --username ${user} --format=c --verbose ${dbName}`;
+  let params = `--file ${path.normalize(backupPath)} --host ${host} --port ${port} --username ${user} --format=c --verbose${schammaParams} ${dbName}`;
 
   console.log(params);
   console.log(backupFullName);
@@ -245,4 +277,11 @@ const getBrowserWindow = (event: IpcMainEvent): BrowserWindow | null => {
   return BrowserWindow.fromWebContents(event.sender);
 };
 
-export {restoreDb, restoreFinishActions, createDb, backupDb, getDatabaseByDatasource};
+export {
+  restoreDb,
+  restoreFinishActions,
+  createDb,
+  backupDb,
+  getDatabaseByDatasource,
+  getDatabaseSchamasByDatasourceAndDbName
+};
