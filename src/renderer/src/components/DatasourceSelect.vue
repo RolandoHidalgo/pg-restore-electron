@@ -1,47 +1,40 @@
 <script setup lang="ts">
-import {Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue} from './ui/select'
-import {onMounted, Ref, ref} from 'vue'
-import {FormItem, FormLabel, FormField, FormDescription, FormMessage} from './ui/form'
-import {DataSource} from "../../../main/utils/restore/dataSourceUtils";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from './ui/select'
+import { FormItem, FormLabel, FormField, FormMessage } from './ui/form'
+import { useDataSource } from '@renderer/composables'
 
-onMounted(() => {
-  datasourcesLoading.value = true
-  window.electron.getDatasource().then((ds: DataSource[]) => {
-    console.log(ds, 'ds')
-    items.value = ds.map(e => {
-      return {...e, text: `${e.name}-${e.host}`}
-    })
-    datasourcesLoading.value = false
-  })
-})
 
-const items: Ref<(DataSource&{text:string})[]> = ref([])
 
-const datasourcesLoading = ref(false)
+
+
+const {datasources} = useDataSource()
+
+
 
 
 </script>
 
 <template>
-  <FormField
-    v-slot="{ componentField }"
-    name="datasource"
-  >
+  <FormField v-slot="{ componentField }" name="datasource">
     <FormItem>
       <FormLabel>Datasource.</FormLabel>
 
       <Select v-bind="componentField">
         <SelectTrigger>
-          <SelectValue/>
+          <SelectValue />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
             <SelectLabel>Conexiones guardadas</SelectLabel>
-            <SelectItem
-              v-for="ds in items"
-              :key="ds.name"
-              :value="ds.name"
-            >
+            <SelectItem v-for="ds in datasources" :key="ds.name" :value="ds.name">
               {{ ds.text }}
             </SelectItem>
             <!--              <SelectItem value="banana">-->
@@ -60,11 +53,9 @@ const datasourcesLoading = ref(false)
         </SelectContent>
       </Select>
 
-      <FormMessage/>
+      <FormMessage />
     </FormItem>
   </FormField>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

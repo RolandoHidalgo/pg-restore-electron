@@ -69,7 +69,7 @@ const api = {
   handleUpdateInfo: (callback) => ipcRenderer.on('update-logs', callback),
   getBinaries: () => ipcRenderer.invoke('get-binaries'),
   getDrives: () => ipcRenderer.invoke('get-drives'),
-  getDatasource: () => ipcRenderer.invoke('get-datasource'),
+  getDatasource: ():Promise<DataSource[]> => ipcRenderer.invoke('get-datasource'),
   getDbs: async (name:string) => {
     console.log('allamar con name',name)
     return ipcRenderer.invoke('get-dbs',name)

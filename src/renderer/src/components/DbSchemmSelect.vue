@@ -2,36 +2,14 @@
 import {Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue} from './ui/select'
 import {Ref, ref, watchEffect} from 'vue'
 import {FormItem, FormLabel, FormField, FormMessage} from './ui/form'
+import { useSchemas } from '@renderer/composables'
 
 
 const props = defineProps<{
   dsName: string,
   dbName: string
 }>()
-
-
-// onMounted(() => {
-//   datasourcesLoading.value = true
-//   window.electron.getDatasource().then((ds: DataSource[]) => {
-//     console.log(ds, 'ds')
-//     items.value = ds.map(e => {
-//       return {...e, text: `${e.name}-${e.host}`}
-//     })
-//     datasourcesLoading.value = false
-//   })
-// })
-
-
-const items: Ref<string[]> = ref([])
-//items.value = await window.electron.getDbs(props.dsName)
-const datasourcesLoading = ref(false)
-
-watchEffect(async () => {
-  if (props.dsName && props?.dsName !== '' && props.dbName && props?.dbName !== '') {
-    items.value = await window.electron.getSchemmas(props.dsName,props.dbName)
-  }
-
-})
+const {schemas} = useSchemas(()=>props.dsName,()=>props.dbName)
 
 </script>
 
@@ -51,7 +29,7 @@ watchEffect(async () => {
           <SelectGroup>
             <SelectLabel>Schemmas en {{ props.dbName }}</SelectLabel>
             <SelectItem
-              v-for="schema in items"
+              v-for="schema in schemas"
               :key="schema"
               :value="schema"
             >

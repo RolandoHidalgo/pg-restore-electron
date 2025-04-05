@@ -4,20 +4,19 @@ import {
   MenubarContent,
   MenubarItem,
   MenubarMenu,
-  MenubarSeparator,
-  MenubarShortcut,
   MenubarTrigger
 } from '@renderer/components/ui/menubar'
 import { onMounted, ref } from 'vue'
 import AboutDialog from './AboutDialog.vue'
 import AddDatasourceDialog from '@renderer/components/AddDatasourceDialog.vue'
 import SyncDialog from '@renderer/components/Menu/SyncDialog.vue'
+import { useDrives } from '@renderer/composables'
 
 const aboutOpen = ref(false)
 const addDatasource = ref(false)
 const isSyncDialogOpen = ref(false)
 const currentUsbDrive = ref('')
-const drives = ref<{ name: string; mount: string }[]>([])
+const { drives } = useDrives()
 const handleAbout = (event) => {
   aboutOpen.value = true
 }
@@ -28,9 +27,6 @@ const handleSync = (usbDrive) => {
   currentUsbDrive.value = usbDrive
   isSyncDialogOpen.value = true
 }
-onMounted(async () => {
-  drives.value = await window.electron.getDrives()
-})
 </script>
 
 <template>
@@ -52,7 +48,9 @@ onMounted(async () => {
         <MenubarTrigger class="no-drag">Sincronizar con...</MenubarTrigger>
         <MenubarContent class="no-drag">
           <template v-for="drive in drives">
-            <MenubarItem @click="handleSync(drive.mount)"> {{ drive.name }} ({{ drive.mount }}) </MenubarItem>
+            <MenubarItem @click="handleSync(drive.mount)">
+              {{ drive.name }} ({{ drive.mount }})
+            </MenubarItem>
           </template>
         </MenubarContent>
       </MenubarMenu>
