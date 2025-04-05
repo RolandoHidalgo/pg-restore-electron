@@ -1,13 +1,33 @@
+@import 'tailwindcss';
+
 @config "../../../../tailwind.config.js";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@font-face {
-  font-family: "geist-sans";
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url('././fonts/Geist/GeistVariableVF.woff2') format('woff2')
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@layer utilities {
+  @font-face {
+    font-family: 'geist-sans';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('././fonts/Geist/GeistVariableVF.woff2') format('woff2');
+  }
 }
 
 @layer base {
@@ -87,10 +107,10 @@
     }
 
     ::-webkit-scrollbar-track {
-      @apply !bg-muted;
+      @apply bg-muted!;
     }
     ::-webkit-scrollbar-thumb {
-      @apply rounded-sm !bg-muted-foreground/30;
+      @apply rounded-sm bg-muted-foreground/30!;
     }
   }
 }

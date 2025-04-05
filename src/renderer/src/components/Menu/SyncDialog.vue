@@ -51,7 +51,7 @@ const handleOpen = (event)=>{
 </script>
 
 <template>
-  <Dialog v-model:open="model" class="!p-0" @update:open="handleOpen">
+  <Dialog v-model:open="model" class="p-0!" @update:open="handleOpen">
     <DialogContent class="sm:max-w-[475px]" >
       <DialogHeader>
         <DialogTitle>Sincronizar con USB</DialogTitle>

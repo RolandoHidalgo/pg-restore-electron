@@ -87,7 +87,7 @@ watchEffect(() => {
 </script>
 
 <template>
-  <Dialog v-model:open="model" class="!p-0" >
+  <Dialog v-model:open="model" class="p-0!" >
     <DialogContent class="sm:max-w-[475px]">
       <DialogHeader>
         <DialogTitle>Adicionar datasource</DialogTitle>
