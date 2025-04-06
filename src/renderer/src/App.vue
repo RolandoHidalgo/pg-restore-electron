@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import CreateAccount from './components/CreateAccount.vue'
- import AppMenu from './components/Menu/AppMenu.vue'
-
+// import CreateAccount from './components/CreateAccount.vue'
+import AppMenu from './components/Menu/AppMenu.vue'
+import MainPage from '@renderer/components/MainPage.vue'
+import { SidebarProvider, SidebarTrigger } from '@renderer/components/ui/sidebar'
+import AppSidebar from '@renderer/components/Datasources/AppSidebar.vue'
 </script>
 
 <template>
@@ -12,12 +14,9 @@ import CreateAccount from './components/CreateAccount.vue'
   >
 
     <AppMenu class="mb-2"/>
-    <CreateAccount />
-
+<!--    <CreateAccount />-->
+<MainPage/>
   </div>
 </template>
 
-<style>
-
-</style>
-
+<style></style>

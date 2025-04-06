@@ -45,7 +45,7 @@ const handleSync = (usbDrive) => {
         </MenubarContent>
       </MenubarMenu>
       <MenubarMenu>
-        <MenubarTrigger class="no-drag">Sincronizar con...</MenubarTrigger>
+        <MenubarTrigger class="no-drag">Sincronizar</MenubarTrigger>
         <MenubarContent class="no-drag">
           <template v-for="drive in drives">
             <MenubarItem @click="handleSync(drive.mount)">

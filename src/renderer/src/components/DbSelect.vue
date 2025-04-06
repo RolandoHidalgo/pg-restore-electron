@@ -2,8 +2,7 @@
 import {Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue} from './ui/select'
 import {FormItem, FormLabel, FormField, FormMessage} from './ui/form'
 import { useDbs } from '@renderer/composables'
-import { SelectIcon } from 'radix-vue'
-import { CaretSortIcon,CaretDownIcon } from '@radix-icons/vue'
+
 
 const props =defineProps<{
   dsName: string
