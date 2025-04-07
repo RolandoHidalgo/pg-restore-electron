@@ -10,16 +10,12 @@ import {
   CardHeader,
   CardTitle
 } from '@renderer/components/ui/card'
-import {Input} from '@renderer/components/ui/input'
-import {Label} from '@renderer/components/ui/label'
 
 
-import {computed, onBeforeMount, ref} from 'vue'
-import BinarySelect from './BinarySelect.vue'
+import {computed,  ref} from 'vue'
 import {useForm} from 'vee-validate'
 import {z} from 'zod'
 import {toTypedSchema} from '@vee-validate/zod'
-import {FormControl, FormItem, FormLabel, FormMessage, FormField} from '@renderer/components/ui/form'
 
 import {
   DialogContent,
@@ -29,9 +25,6 @@ import {
 
 } from './ui/dialog'
 import RestoreConsole from './restore-console.vue'
-import {Switch} from '@renderer/components/ui/switch'
-import NewDbForm from './NewDbForm.vue'
-import {FormDescription} from './ui/form'
 import DatasourceSelect from "@renderer/components/DatasourceSelect.vue";
 import DbSelect from "@renderer/components/DbSelect.vue";
 import DbSchemmSelect from "@renderer/components/DbSchemmSelect.vue";
@@ -62,7 +55,7 @@ const initVals = {
   user: 'postgres'
 
 }
-const fileRef = ref();
+
 
 
 const {handleSubmit, values} = useForm({

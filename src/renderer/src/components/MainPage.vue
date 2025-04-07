@@ -20,10 +20,14 @@ import { Minus, Plus,Unplug } from 'lucide-vue-next'
 import DBList from '@renderer/components/Datasources/DBList.vue'
 import { useDataSource } from '@renderer/composables'
 
+
 const {datasources} = useDataSource()
+
+
 </script>
 
 <template>
+
   <SidebarContent>
     <SidebarGroup>
       <SidebarGroupLabel>Datasources</SidebarGroupLabel>
@@ -50,6 +54,8 @@ const {datasources} = useDataSource()
       </SidebarGroupContent>
     </SidebarGroup>
   </SidebarContent>
+
+
 </template>
 
 <style scoped></style>

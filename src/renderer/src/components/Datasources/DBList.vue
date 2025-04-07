@@ -23,7 +23,7 @@ import {
   DatabaseZap
 } from 'lucide-vue-next'
 import SchemaList from '@renderer/components/Datasources/SchemaList.vue'
-import { useDbs } from '@renderer/composables'
+import { useApp, useDbs } from '@renderer/composables'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,12 +31,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@renderer/components/ui/dropdown-menu'
+import { ref } from 'vue'
 
 const props = defineProps<{ dsName: string }>()
 const { dbs } = useDbs(() => props.dsName)
+const {openBackup}=useApp()
 </script>
 
 <template>
+
   <SidebarMenuItem v-for="db in dbs" :key="db">
     <Collapsible class="group/collapsible">
       <CollapsibleTrigger as-child>
@@ -62,9 +65,9 @@ const { dbs } = useDbs(() => props.dsName)
         </SidebarMenuAction>
       </DropdownMenuTrigger>
       <DropdownMenuContent class="w-26 rounded-lg" side="bottom" align="end">
-        <DropdownMenuItem>
+        <DropdownMenuItem @click="openBackup(props.dsName,db)">
           <DatabaseBackup class="text-muted-foreground" />
-          <span>Backup</span>
+          <span >Backup</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
