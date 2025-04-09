@@ -1,49 +1,56 @@
 <script setup lang="ts">
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger
-} from '@renderer/components/ui/drawer'
+
 import { Button } from '@renderer/components/ui/button'
-import { useApp } from '@renderer/composables'
 import { useAppStore } from '@renderer/stores/appStore'
-import { useTemplateRef, watchEffect } from 'vue'
+
+import {   Sheet,
+
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger, } from '@renderer/components/ui/sheet'
+import {  ref } from 'vue'
+import RestoreConsole from '@renderer/components/restore-console.vue'
 
 const store = useAppStore()
-const drawer = useTemplateRef('drawer')
-watchEffect(() => {
-  console.log('isOPne', store.isBackupOpen)
-  if(drawer?.value){
-    drawer.value.open = store.isBackupOpen
-    console.log('drawerval', drawer.value)
-    console.log('drawer', drawer)
-    console.log('isOPne', store.isBackupOpen)
-  }
-
-})
+const isConsoleOpen = ref(false)
+function handleBackup(){
+  isConsoleOpen.value = true;
+  store.createBackup();
+}
 </script>
 
 <template>
-  <Drawer ref="drawer" v-model:open="store.isBackupOpen">
-    <DrawerTrigger>Open</DrawerTrigger>
-    <DrawerContent>
-      <DrawerHeader>
-        <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-        <DrawerDescription>This action cannot be undone.</DrawerDescription>
-      </DrawerHeader>
-      <DrawerFooter>
-        <Button>Submit</Button>
-        <DrawerClose>
-          <Button variant="outline"> Cancel </Button>
-        </DrawerClose>
-      </DrawerFooter>
-    </DrawerContent>
-  </Drawer>
+  <div>
+<!--    <Button variant="outline" @click="handleOPen">-->
+<!--      con este-->
+<!--    </Button>-->
+    <Sheet v-model:open="store.isBackupOpen" @update:open="isConsoleOpen=false">
+      <SheetTrigger >
+      </SheetTrigger>
+      <SheetContent side="bottom" class="rounded-t-lg">
+        <SheetHeader>
+          <SheetTitle>Edit profile</SheetTitle>
+          <SheetDescription>
+            Backup.
+          </SheetDescription>
+        </SheetHeader>
+        <div class="grid gap-4 py-4">
+          <div v-if="!isConsoleOpen">
+            datos de la conexion {{store.currentConexionValues}}
+          </div>
+          <RestoreConsole v-else/>
+        </div>
+        <SheetFooter>
+          <Button  @click.prevent="handleBackup">
+            Crear backup
+          </Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  </div>
 </template>
 
 <style scoped></style>

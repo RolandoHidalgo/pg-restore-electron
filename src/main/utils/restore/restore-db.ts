@@ -9,7 +9,7 @@ import {exec, spawn} from "node:child_process";
 import {postBackupHook} from './gitUtils'
 
 
-export type DbOtions = {
+export type DbOptions = {
   dbName: string;
   port: string;
   host: string;
@@ -18,11 +18,11 @@ export type DbOtions = {
   password: string;
   binary: string;
   backUpName?: string;
-  datasource?: string;
-  schemma?: string;
+  dsName?: string;
+  schema?: string;
 }
 
-type CreateDebOptions = {
+export type CreateDebOptions = {
   name: string
   encoding: string
   template: string
@@ -30,7 +30,7 @@ type CreateDebOptions = {
   ctype: string
   tablespace: string
 }
-const restoreDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
+const restoreDb = (dbOptions: DbOptions, event: IpcMainEvent) => {
   const {dbName, host, password, port, user, backupPath, binary} = dbOptions;
 
   //const pgRestoreBinary = `C:\\Program Files (x86)\\PostgreSQL\\10\\bin\\pg_restore.exe`;
@@ -150,8 +150,8 @@ const getDatabaseSchamasByDatasourceAndDbName = async (dsName: string, dbName: s
   const ds: DataSource = getDatasource(dsName);
   return obtenerEsquemas(ds, dbName);
 }
-const backupDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
-  const {dbName, host, password, port, user, binary, schemma} = dbOptions;
+const backupDb = (dbOptions: DbOptions, event: IpcMainEvent) => {
+  const {dbName, host, password, port, user, binary, schema} = dbOptions;
 
 
   const backUpDir = path.join(os.homedir(), "pgRestore", "backups");
@@ -159,8 +159,8 @@ const backupDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
     fs.mkdirSync(backUpDir);
   }
 
-  const schemmaName = (schemma && schemma != '') ? `_${schemma}` : '';
-  const schammaParams = (schemma && schemma != '') ? ` --schema "${schemma}"` : '';
+  const schemmaName = (schema && schema != '') ? `_${schema}` : '';
+  const schammaParams = (schema && schema != '') ? ` --schema "${schema}"` : '';
   const backupFullName = `${dbName}${schemmaName}_${getFormattedDateTime()}.backup`;
   const backupPath = path.join(backUpDir, backupFullName)
 
@@ -201,7 +201,7 @@ const backupDb = (dbOptions: DbOtions, event: IpcMainEvent) => {
 };
 
 
-const createDb = (dbOptions: DbOtions, createDbOptions: CreateDebOptions, event: IpcMainEvent) => {
+const createDb = (dbOptions: DbOptions, createDbOptions: CreateDebOptions, event: IpcMainEvent) => {
 
   const {dbName, host, password, port, user, binary} = dbOptions;
 

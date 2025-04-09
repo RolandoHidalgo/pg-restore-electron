@@ -35,7 +35,7 @@ import { ref } from 'vue'
 
 const props = defineProps<{ dsName: string }>()
 const { dbs } = useDbs(() => props.dsName)
-const {openBackup}=useApp()
+const {openBackup,openRestore}=useApp()
 </script>
 
 <template>
@@ -70,7 +70,7 @@ const {openBackup}=useApp()
           <span >Backup</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem @click="openRestore(props.dsName,db)">
           <DatabaseZap class="text-muted-foreground" />
           <span>Restore</span>
         </DropdownMenuItem>

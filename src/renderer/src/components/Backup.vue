@@ -129,11 +129,11 @@ const onSubmit = handleSubmit((values) => {
       </CardFooter>
     </Card>
     <Dialog v-model:open="isOpenDialog">
-      <DialogContent class="sm:max-w-[475px]">
+      <DialogContent class="sm:max-w-[475px] p-1">
         <DialogHeader>
           <DialogTitle>Logs</DialogTitle>
         </DialogHeader>
-        <div class="grid gap-4 py-4">
+        <div class="grid gap-2 py-2">
           <RestoreConsole/>
         </div>
       </DialogContent>

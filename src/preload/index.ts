@@ -1,12 +1,12 @@
 import {contextBridge, ipcRenderer, webUtils} from 'electron'
 import {electronAPI} from '@electron-toolkit/preload'
 import {DataSource, getDatasources} from "../main/utils/restore/dataSourceUtils";
-import {DbOtions} from "../main/utils/restore/restore-db";
+import {DbOptions} from "../main/utils/restore/restore-db";
 import path from "path";
 
 const api = {
-  restoreDb: (dbOptions) => {
-    const ds: DataSource | undefined = getDatasources().filter(e => e.name === dbOptions.datasource)[0];
+  restoreDb: (dbOptions:DbOptions) => {
+    const ds: DataSource | undefined = getDatasources().filter(e => e.name === dbOptions.dsName)[0];
 
     dbOptions.user = ds?.username;
     dbOptions.password = ds?.password;
@@ -17,9 +17,9 @@ const api = {
     return ipcRenderer.send('restore-db', dbOptions);
   },
   sincronizarUsb: (usbDrive:string) => ipcRenderer.send('sincronizar-usb', usbDrive),
-  backupDb: (dbOptions: DbOtions) => {
+  backupDb: (dbOptions: DbOptions) => {
     console.log(dbOptions,'optionss1');
-    const ds: DataSource | undefined = getDatasources().filter(e => e.name === dbOptions.datasource)[0];
+    const ds: DataSource | undefined = getDatasources().filter(e => e.name === dbOptions.dsName)[0];
     console.log(ds,'el ds');
     dbOptions.user = ds?.username;
     dbOptions.password = ds?.password;
@@ -29,7 +29,7 @@ const api = {
     console.log(dbOptions,'optionss');
     ipcRenderer.send('backup-db', dbOptions)
   },
-  addDatasource: async (dbOptions: DbOtions) => {
+  addDatasource: async (dbOptions: DbOptions) => {
     const ds: DataSource = {
       name: dbOptions.dbName,
       binary: path.dirname(dbOptions.binary),
@@ -48,9 +48,9 @@ const api = {
 
     // alert(`Uploaded file path was: ${path}`)
   },
-  createDb: (dbOptions, createDbOptions) =>{
+  createDb: (dbOptions:DbOptions, createDbOptions) =>{
 
-    const ds: DataSource | undefined = getDatasources().filter(e => e.name === dbOptions.datasource)[0];
+    const ds: DataSource | undefined = getDatasources().filter(e => e.name === dbOptions.dsName)[0];
 
     dbOptions.user = ds?.username;
     dbOptions.password = ds?.password;

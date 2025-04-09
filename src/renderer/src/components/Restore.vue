@@ -167,12 +167,12 @@ const isFileSelected = computed(() => {
         <Button class="w-full" type="submit"> Restore Backup </Button>
       </CardFooter>
     </Card>
-    <Dialog v-model:open="isOpenDialog" modal>
+    <Dialog v-model:open="isOpenDialog" modal class="p-2">
       <DialogContent class="sm:max-w-[475px]">
-        <DialogHeader>
+        <DialogHeader class="pb-2">
           <DialogTitle>Logs</DialogTitle>
         </DialogHeader>
-        <div class="grid gap-4 py-4">
+        <div class="">
           <RestoreConsole />
         </div>
       </DialogContent>

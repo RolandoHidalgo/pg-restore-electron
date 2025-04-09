@@ -6,6 +6,7 @@ const useApp = () => {
     showConsole: store.showConsole,
     closeConsole: store.closeConsole,
     openBackup: store.openBackup,
+    openRestore: store.openRestore,
     isBackupOpen: store.isBackupOpen,
     currentConexionValues:store.currentConexionValues
   }

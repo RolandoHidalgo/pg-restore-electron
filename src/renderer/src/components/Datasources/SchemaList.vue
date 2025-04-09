@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { SidebarMenuAction, SidebarMenuButton, SidebarMenuItem } from '@renderer/components/ui/sidebar'
-import { useSchemas } from '@renderer/composables'
+import { useApp, useSchemas } from '@renderer/composables'
 import { DatabaseBackup, MoreHorizontal, Network } from 'lucide-vue-next'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@renderer/components/ui/dropdown-menu'
 
@@ -15,6 +14,7 @@ const { schemas } = useSchemas(
   () => props.dsName,
   () => props.dbName
 )
+const {openBackup}=useApp()
 </script>
 
 <template>
@@ -31,7 +31,7 @@ const { schemas } = useSchemas(
         </SidebarMenuAction>
       </DropdownMenuTrigger>
       <DropdownMenuContent class="w-26 rounded-lg" side="bottom" align="end">
-        <DropdownMenuItem>
+        <DropdownMenuItem @click="openBackup(props.dsName,props.dbName,schema)">
           <DatabaseBackup class="text-muted-foreground" />
           <span>Backup</span>
         </DropdownMenuItem>
