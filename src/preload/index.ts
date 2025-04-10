@@ -1,32 +1,36 @@
-import {contextBridge, ipcRenderer, webUtils} from 'electron'
-import {electronAPI} from '@electron-toolkit/preload'
-import {DataSource, getDatasources} from "../main/utils/restore/dataSourceUtils";
-import {DbOptions} from "../main/utils/restore/restore-db";
-import path from "path";
+import { contextBridge, ipcRenderer, webUtils } from 'electron'
+import { electronAPI } from '@electron-toolkit/preload'
+import { DataSource, getDatasources } from '../main/utils/restore/dataSourceUtils'
+import { DbOptions } from '../main/utils/restore/restore-db'
+import path from 'path'
 
 const api = {
-  restoreDb: (dbOptions:DbOptions) => {
-    const ds: DataSource | undefined = getDatasources().filter(e => e.name === dbOptions.dsName)[0];
+  restoreDb: (dbOptions: DbOptions) => {
+    const ds: DataSource | undefined = getDatasources().filter(
+      (e) => e.name === dbOptions.dsName
+    )[0]
 
-    dbOptions.user = ds?.username;
-    dbOptions.password = ds?.password;
-    dbOptions.host = ds?.host;
-    dbOptions.binary = ds?.binary;
-    dbOptions.port = ds?.port;
-    console.log(dbOptions,'optionss');
-    return ipcRenderer.send('restore-db', dbOptions);
+    dbOptions.user = ds?.username
+    dbOptions.password = ds?.password
+    dbOptions.host = ds?.host
+    dbOptions.binary = ds?.binary
+    dbOptions.port = ds?.port
+    console.log(dbOptions, 'optionss')
+    return ipcRenderer.send('restore-db', dbOptions)
   },
-  sincronizarUsb: (usbDrive:string) => ipcRenderer.send('sincronizar-usb', usbDrive),
+  sincronizarUsb: (usbDrive: string) => ipcRenderer.send('sincronizar-usb', usbDrive),
   backupDb: (dbOptions: DbOptions) => {
-    console.log(dbOptions,'optionss1');
-    const ds: DataSource | undefined = getDatasources().filter(e => e.name === dbOptions.dsName)[0];
-    console.log(ds,'el ds');
-    dbOptions.user = ds?.username;
-    dbOptions.password = ds?.password;
-    dbOptions.host = ds?.host;
-    dbOptions.binary = ds?.binary;
-    dbOptions.port = ds?.port;
-    console.log(dbOptions,'optionss');
+    console.log(dbOptions, 'optionss1')
+    const ds: DataSource | undefined = getDatasources().filter(
+      (e) => e.name === dbOptions.dsName
+    )[0]
+    console.log(ds, 'el ds')
+    dbOptions.user = ds?.username
+    dbOptions.password = ds?.password
+    dbOptions.host = ds?.host
+    dbOptions.binary = ds?.binary
+    dbOptions.port = ds?.port
+    console.log(dbOptions, 'optionss')
     ipcRenderer.send('backup-db', dbOptions)
   },
   addDatasource: async (dbOptions: DbOptions) => {
@@ -48,16 +52,20 @@ const api = {
 
     // alert(`Uploaded file path was: ${path}`)
   },
-  createDb: (dbOptions:DbOptions, createDbOptions) =>{
+  obtenerVersion: async () => {
+    return await ipcRenderer.invoke('obtener-version')
+  },
+  createDb: (dbOptions: DbOptions, createDbOptions) => {
+    const ds: DataSource | undefined = getDatasources().filter(
+      (e) => e.name === dbOptions.dsName
+    )[0]
 
-    const ds: DataSource | undefined = getDatasources().filter(e => e.name === dbOptions.dsName)[0];
-
-    dbOptions.user = ds?.username;
-    dbOptions.password = ds?.password;
-    dbOptions.host = ds?.host;
-    dbOptions.binary = ds?.binary;
-    dbOptions.port = ds?.port;
-    console.log(dbOptions,'optionss');
+    dbOptions.user = ds?.username
+    dbOptions.password = ds?.password
+    dbOptions.host = ds?.host
+    dbOptions.binary = ds?.binary
+    dbOptions.port = ds?.port
+    console.log(dbOptions, 'optionss')
     return ipcRenderer.send('create-db', dbOptions, createDbOptions)
   },
 
@@ -69,15 +77,14 @@ const api = {
   handleUpdateInfo: (callback) => ipcRenderer.on('update-logs', callback),
   getBinaries: () => ipcRenderer.invoke('get-binaries'),
   getDrives: () => ipcRenderer.invoke('get-drives'),
-  getDatasource: ():Promise<DataSource[]> => ipcRenderer.invoke('get-datasource'),
-  getDbs: async (name:string) => {
-    console.log('allamar con name',name)
-    return ipcRenderer.invoke('get-dbs',name)
+  getDatasource: (): Promise<DataSource[]> => ipcRenderer.invoke('get-datasource'),
+  getDbs: async (name: string) => {
+    console.log('allamar con name', name)
+    return ipcRenderer.invoke('get-dbs', name)
   },
-  getSchemmas: async (dsName:string,dbName:string) => {
-
-  return ipcRenderer.invoke('get-schemmas',dsName,dbName)
-},
+  getSchemmas: async (dsName: string, dbName: string) => {
+    return ipcRenderer.invoke('get-schemmas', dsName, dbName)
+  },
   checkUpdate: () => ipcRenderer.send('check-update'),
   getFileArg: () => {
     return ipcRenderer.invoke('file-args')

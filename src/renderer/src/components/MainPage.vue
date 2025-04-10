@@ -11,18 +11,25 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarMenu,
+  SidebarMenu, SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub
 } from '@renderer/components/ui/sidebar'
-import { Minus, Plus,Unplug } from 'lucide-vue-next'
+import { DatabaseBackup, DatabaseZap, Minus, MoreHorizontal, Plus, Unplug } from 'lucide-vue-next'
 import DBList from '@renderer/components/Datasources/DBList.vue'
 import { useDataSource } from '@renderer/composables'
+import {
+  DropdownMenu, DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@renderer/components/ui/dropdown-menu'
+import { useAppStore } from '@renderer/stores/appStore'
 
 
 const {datasources} = useDataSource()
-
+const store = useAppStore()
 
 </script>
 
@@ -49,6 +56,20 @@ const {datasources} = useDataSource()
                 </SidebarMenuSub>
               </CollapsibleContent>
             </Collapsible>
+            <DropdownMenu>
+              <DropdownMenuTrigger as-child>
+                <SidebarMenuAction show-on-hover>
+                  <MoreHorizontal />
+                  <span class="sr-only">More</span>
+                </SidebarMenuAction>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent class="w-26 rounded-lg" side="bottom" align="end">
+                <DropdownMenuItem @click="store.openRestore(item.name)">
+                  <DatabaseZap class="text-muted-foreground" />
+                  <span>Restore</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarGroupContent>

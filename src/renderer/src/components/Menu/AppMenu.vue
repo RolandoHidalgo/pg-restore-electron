@@ -11,7 +11,7 @@ import AboutDialog from './AboutDialog.vue'
 import AddDatasourceDialog from '@renderer/components/AddDatasourceDialog.vue'
 import SyncDialog from '@renderer/components/Menu/SyncDialog.vue'
 import { useDrives } from '@renderer/composables'
-
+import {Usb,Info,CirclePlus } from 'lucide-vue-next'
 const aboutOpen = ref(false)
 const addDatasource = ref(false)
 const isSyncDialogOpen = ref(false)
@@ -33,15 +33,22 @@ const handleSync = (usbDrive) => {
   <div>
     <Menubar class="drag">
       <MenubarMenu>
-        <MenubarTrigger class="no-drag">Ayuda</MenubarTrigger>
+        <MenubarTrigger class="no-drag">
+
+          Ayuda
+        </MenubarTrigger>
         <MenubarContent class="no-drag">
-          <MenubarItem @click="handleAbout"> Acerca de </MenubarItem>
+          <MenubarItem @click="handleAbout">
+            <Info :size="16" class="mr-2"/>
+            Acerca de
+          </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
       <MenubarMenu>
         <MenubarTrigger class="no-drag">Datasources</MenubarTrigger>
         <MenubarContent class="no-drag">
-          <MenubarItem @click="handleDatasource"> Add Datasource </MenubarItem>
+
+          <MenubarItem @click="handleDatasource"> <CirclePlus  :size="16" class="mr-2"/> Add Datasource </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
       <MenubarMenu>
@@ -49,7 +56,8 @@ const handleSync = (usbDrive) => {
         <MenubarContent class="no-drag">
           <template v-for="drive in drives">
             <MenubarItem @click="handleSync(drive.mount)">
-              {{ drive.name }} ({{ drive.mount }})
+
+              <Usb :size="16" class="mr-2"/>{{ drive.name }} ({{ drive.mount }})
             </MenubarItem>
           </template>
         </MenubarContent>

@@ -16,12 +16,24 @@ import {
 import { GithubLogoIcon } from '@radix-icons/vue'
 import { onMounted, ref } from 'vue'
 import { ReloadIcon } from '@radix-icons/vue'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription, SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from '@renderer/components/ui/sheet'
+import { DatabaseBackup, Network, Unplug } from 'lucide-vue-next'
+import RestoreConsole from '@renderer/components/restore-console.vue'
 
 const model = defineModel({ type: Boolean, required: true })
 
 const messages = ref('')
 const updating = ref(false)
-onMounted(() => {
+const version = ref('');
+onMounted(async () => {
+
   window.electron.handleUpdateInfo((e, { updateEvent, text }) => {
     messages.value = text
     if (updateEvent === 'Error' || updateEvent === 'Update_not_available' || updateEvent === 'Update_downloaded') {
@@ -29,7 +41,7 @@ onMounted(() => {
     }
 
   })
-
+  version.value =await window.electron.obtenerVersion()
 })
 const checkUpdates = () => {
   updating.value = true
@@ -38,17 +50,14 @@ const checkUpdates = () => {
 </script>
 
 <template>
-  <Dialog v-model:open="model" class="p-0!">
-    <DialogContent class="sm:max-w-[475px]">
-      <DialogHeader>
-        <DialogTitle>!!Acerca de ... </DialogTitle>
-        <DialogDescription>
-          Infomación sobre esta versión.
-        </DialogDescription>
-      </DialogHeader>
-
-
-      <div class="flex items-center gap-4  justify-between space-x-4">
+  <Sheet v-model:open="model" class="p-0!">
+    <SheetTrigger></SheetTrigger>
+    <SheetContent side="bottom" class="rounded-t-lg">
+      <SheetHeader>
+        <SheetTitle>Acerca de ... </SheetTitle>
+        <SheetDescription> Infomación sobre esta versión.</SheetDescription>
+      </SheetHeader>
+      <div class="flex items-center gap-4  justify-between space-x-4 px-2">
         <div class="flex items-center  space-x-4">
           <Avatar>
 
@@ -59,7 +68,7 @@ const checkUpdates = () => {
               PG-Restore
             </p>
             <p class="text-sm text-muted-foreground">
-              version 1.1.3
+              version {{version}}
             </p>
           </div>
         </div>
@@ -70,23 +79,8 @@ const checkUpdates = () => {
           </Button>
         </a>
       </div>
-
       {{ messages }}
-
-      <DialogFooter class="gap-0">
-        <Button
-          @click="checkUpdates"
-          :disabled="updating"
-        >
-          <ReloadIcon
-            class="w-4 h-4 mr-2 animate-spin"
-            v-if="updating"
-          />
-          Actualizar
-        </Button>
-
-      </DialogFooter>
-      <div class="flex justify-end space-x-4 text-sm text-muted-foreground mb-0">
+      <div class="flex justify-end space-x-4 text-sm text-muted-foreground mb-0 px-3">
         <div>
           Created and maintained by
           <a
@@ -99,8 +93,21 @@ const checkUpdates = () => {
         </div>
 
       </div>
-    </DialogContent>
-  </Dialog>
+      <SheetFooter>
+        <Button
+          @click="checkUpdates"
+          :disabled="updating"
+        >
+          <ReloadIcon
+            class="w-4 h-4 mr-2 animate-spin"
+            v-if="updating"
+          />
+          Actualizar
+        </Button>
+      </SheetFooter>
+    </SheetContent>
+  </Sheet>
+
 </template>
 
 <style scoped>

@@ -21,7 +21,7 @@ export const useAppStore = defineStore('appStore', () => {
     currentConexionValues.value.schema = schema
     isBackupOpen.value = true
   }
-  function openRestore(dsName:string,dbName:string):void {
+  function openRestore(dsName:string,dbName:string=''):void {
     currentConexionValues.value.dbName = dbName
     currentConexionValues.value.dsName = dsName
     isRestoreOpen.value = true
@@ -43,6 +43,7 @@ export const useAppStore = defineStore('appStore', () => {
     } else {
       window.electron.restoreDb(formValues)
     }
+    console.log(formValues)
     //limpiar este valor que solo se setea cuando se obtiene por arg del prog (cuando se abre un archivo.backup)
     if(currentConexionValues.value?.backupPath){
       currentConexionValues.value.backupPath = null;

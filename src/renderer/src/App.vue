@@ -4,6 +4,7 @@ import AppMenu from './components/Menu/AppMenu.vue'
 import MainPage from '@renderer/components/MainPage.vue'
 import BackupDrawer from '@renderer/components/BackupDrawer.vue'
  import RestoreDrawer from '@renderer/components/RestoreDrawer.vue'
+ import CreateAccount from '@renderer/components/CreateAccount.vue'
 
 
 </script>

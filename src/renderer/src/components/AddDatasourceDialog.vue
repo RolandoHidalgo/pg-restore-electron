@@ -96,9 +96,7 @@ watchEffect(() => {
 
       <form class="w-full flex flex-col" @submit="onSubmit">
         <CardContent class="grid grid-cols-2 gap-2 overflow-y-auto">
-          <div>
-            <BinarySelect />
-          </div>
+
           <div>
             <FormField v-slot="{ componentField }" name="dbName">
               <FormItem>
@@ -109,6 +107,9 @@ watchEffect(() => {
                 <FormMessage />
               </FormItem>
             </FormField>
+          </div>
+          <div>
+            <BinarySelect />
           </div>
           <div>
             <FormField v-slot="{ componentField }" name="password">

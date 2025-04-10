@@ -43,8 +43,8 @@ function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     title: 'pgRestore',
-    width: 450,
-    height: 680,
+    width: 342,
+    height: 626,
     show: false,
     //resizable:false,
     autoHideMenuBar: true,
@@ -108,7 +108,7 @@ app.whenReady().then(() => {
   app.commandLine.appendSwitch('lang', 'es')
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron.pgUI-restore')
-
+  console.log(app.getVersion(),'la versionnnn');
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
   // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
@@ -139,7 +139,9 @@ app.whenReady().then(() => {
     await addDatasources(ds)
   })
 
-
+  ipcMain.handle('obtener-version', async () => {
+    return app.getVersion()
+  });
   ipcMain.on('check-update', (event) => {
     autoUpdater.checkForUpdatesAndNotify()
 
