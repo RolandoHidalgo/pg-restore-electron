@@ -1,3 +1,4 @@
+name: Build/release
 
 on:
   push:
@@ -13,7 +14,7 @@ jobs:
         os: [windows-latest]
 
     steps:
-      - name: Checkout
+      - name: Check out Git repository
         uses: actions/checkout@v4
 
       - name: Install Node.js, NPM and Yarn
@@ -21,13 +22,20 @@ jobs:
         with:
           node-version: 22.14.0
 
-      - name: Release Electron app
-        uses: coparse-inc/action-electron-builder@v1.0.0
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Compile Electron App
+        uses: x6Pnda/action-electron-compiler@v1
         with:
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.github_token }}
+
 
           # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
+          # (Optional)
           release: true
+
+          # Package manager. NPM, PNPM and Yarn supported. Install Yarn and PNPM yourself. Default is NPM
+          # (Optional)
+          package_manager: PNPM
+
+
