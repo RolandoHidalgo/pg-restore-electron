@@ -14,28 +14,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: 22
-
-      - name: apt-update
-        if: startsWith(matrix.os, 'ubuntu-latest')
-        run: sudo apt-get update
-
-      - name: autoremove
-        if: startsWith(matrix.os, 'ubuntu-latest')
-        run: sudo apt autoremove
-
-      - name: snap
-        if: startsWith(matrix.os, 'ubuntu-latest')
-        run: sudo snap install snapcraft --classic
-
-      - name: Install libarchive rpm on Linux
-        if: startsWith(matrix.os, 'ubuntu-latest')
-        run: sudo apt-get install libarchive-tools rpm
+          node-version: 22.14.0
 
       - name: Release Electron app
         uses: coparse-inc/action-electron-builder@v1.0.0
