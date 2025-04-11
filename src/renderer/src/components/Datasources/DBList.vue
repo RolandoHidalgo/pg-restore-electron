@@ -31,20 +31,29 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@renderer/components/ui/dropdown-menu'
-import { ref } from 'vue'
+import {computed, ref, watchEffect} from 'vue'
 
-const props = defineProps<{ dsName: string }>()
+const props = defineProps<{ dsName: string,search:string }>()
 const { dbs } = useDbs(() => props.dsName)
 const {openBackup,openRestore}=useApp()
+watchEffect(()=>{
+  console.log(props.search)
+})
+const currentDbs = computed(()=>{
+  if(props.search!==''){
+    return dbs.value.filter(db=>db.startsWith(props.search))
+  }
+  return dbs.value
+})
 </script>
 
 <template>
 
-  <SidebarMenuItem v-for="db in dbs" :key="db">
+  <SidebarMenuItem v-for="db in currentDbs" :key="db">
     <Collapsible class="group/collapsible">
       <CollapsibleTrigger as-child>
         <SidebarMenuButton>
-          <Database class="text-primary"/>
+          <Database class="text-teal-400"/>
           {{ db }}
           <Plus class="ml-auto group-data-[state=open]/collapsible:hidden" />
           <Minus class="ml-auto group-data-[state=closed]/collapsible:hidden" />

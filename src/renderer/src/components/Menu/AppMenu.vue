@@ -31,7 +31,7 @@ const handleSync = (usbDrive) => {
 
 <template>
   <div>
-    <Menubar class="drag">
+    <Menubar class="drag pb-0 mb-0" >
       <MenubarMenu>
         <MenubarTrigger class="no-drag">
 
@@ -42,13 +42,6 @@ const handleSync = (usbDrive) => {
             <Info :size="16" class="mr-2"/>
             Acerca de
           </MenubarItem>
-        </MenubarContent>
-      </MenubarMenu>
-      <MenubarMenu>
-        <MenubarTrigger class="no-drag">Datasources</MenubarTrigger>
-        <MenubarContent class="no-drag">
-
-          <MenubarItem @click="handleDatasource"> <CirclePlus  :size="16" class="mr-2"/> Add Datasource </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
       <MenubarMenu>
@@ -63,9 +56,9 @@ const handleSync = (usbDrive) => {
         </MenubarContent>
       </MenubarMenu>
     </Menubar>
-    <AboutDialog v-model="aboutOpen" />
-    <AddDatasourceDialog v-model="addDatasource" />
-    <SyncDialog v-model="isSyncDialogOpen" :usb-drive="currentUsbDrive" />
+
+
+
   </div>
 </template>
 

@@ -26,8 +26,9 @@ import {
 } from '@renderer/components/ui/sheet'
 import { DatabaseBackup, Network, Unplug } from 'lucide-vue-next'
 import RestoreConsole from '@renderer/components/restore-console.vue'
+import { useAppStore } from '@renderer/stores/appStore'
 
-const model = defineModel({ type: Boolean, required: true })
+const store = useAppStore()
 
 const messages = ref('')
 const updating = ref(false)
@@ -47,10 +48,11 @@ const checkUpdates = () => {
   updating.value = true
   window.electron.checkUpdate()
 }
+
 </script>
 
 <template>
-  <Sheet v-model:open="model" class="p-0!">
+  <Sheet v-model:open="store.isAboutOpen" class="p-0!">
     <SheetTrigger></SheetTrigger>
     <SheetContent side="bottom" class="rounded-t-lg">
       <SheetHeader>

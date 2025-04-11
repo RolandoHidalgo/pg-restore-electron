@@ -8,14 +8,21 @@ import {
   DialogTitle
 } from '@renderer/components/ui/dialog'
 import { Button } from '@renderer/components/ui/button'
-import { Avatar, AvatarFallback } from '@renderer/components/ui/avatar'
-import { GithubLogoIcon } from '@radix-icons/vue'
 import { computed, onMounted, ref } from 'vue'
-import { ReloadIcon } from '@radix-icons/vue'
+import { GithubLogoIcon, ReloadIcon } from '@radix-icons/vue'
 import { Progress } from '@renderer/components/ui/progress'
+import { useAppStore } from '@renderer/stores/appStore'
+import {
+  Sheet, SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from '@renderer/components/ui/sheet'
+import { Avatar, AvatarFallback } from '@renderer/components/ui/avatar'
 
-const model = defineModel({ type: Boolean, required: true })
-const props = defineProps<{ usbDrive: string }>()
+const store = useAppStore()
 
 
 const currentMessage = ref('')
@@ -39,7 +46,7 @@ const showSyncButton = computed(() => {
 })
 const sincronizar = async () => {
   syncing.value = true
-  await window.electron.sincronizarUsb(props.usbDrive)
+  await window.electron.sincronizarUsb(store.currentUsbDrive)
 }
 const handleOpen = (event)=>{
   if(!event){
@@ -51,31 +58,32 @@ const handleOpen = (event)=>{
 </script>
 
 <template>
-  <Dialog v-model:open="model" class="p-0!" @update:open="handleOpen">
-    <DialogContent class="sm:max-w-[475px]" >
-      <DialogHeader>
-        <DialogTitle>Sincronizar con USB</DialogTitle>
-        <DialogDescription> sincronizar con {{ props.usbDrive }}.</DialogDescription>
-      </DialogHeader>
+  <Sheet v-model:open="store.isSyncOpen" class="p-0!" @update:open="handleOpen">
+    <SheetTrigger></SheetTrigger>
+    <SheetContent side="bottom" class="rounded-t-lg grid w-full  gap-4  border p-6  sm:max-w-lg">
+      <SheetHeader>
+        <SheetTitle>Sincronizar con USB</SheetTitle>
+        <SheetDescription>sincronizar con {{ store.currentUsbDrive }}.</SheetDescription>
+      </SheetHeader>
 
-      <p v-if="currentCode === 0">Esta seguro que desa sincronizar!</p>
-      <div v-else>
-        <p class="text-sm font-medium leading-none">
-          <Progress :model-value="progress" />
-        </p>
-        <p class="text-sm text-muted-foreground">
-          {{ currentMessage }}
-        </p>
-      </div>
+                <p v-if="currentCode === 0">Esta seguro que desa sincronizar!</p>
+        <div v-else>
+          <p class="text-sm font-medium leading-none">
+            <Progress :model-value="progress" />
+          </p>
+          <p class="text-sm text-muted-foreground">
+            {{ currentMessage }}
+          </p>
+        </div>
 
-      <DialogFooter class="gap-0">
+      <SheetFooter>
         <Button @click="sincronizar" :disabled="syncing">
           <ReloadIcon class="w-4 h-4 mr-2 animate-spin" v-if="syncing" />
           Sincronizar
         </Button>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
+      </SheetFooter>
+    </SheetContent>
+  </Sheet>
 </template>
 
 <style scoped></style>

@@ -1,14 +1,6 @@
 <script setup lang="ts">
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@renderer/components/ui/dialog'
 import { Button } from '@renderer/components/ui/button'
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { ReloadIcon } from '@radix-icons/vue'
 import { z } from 'zod'
 import { useForm } from 'vee-validate'
@@ -22,12 +14,22 @@ import {
 } from '@renderer/components/ui/form'
 
 import BinarySelect from '@renderer/components/BinarySelect.vue'
-import NewDbForm from '@renderer/components/NewDbForm.vue'
+
 import { CardContent } from '@renderer/components/ui/card'
 import { Input } from '@renderer/components/ui/input'
-import { Label } from '@renderer/components/ui/label'
 
-const model = defineModel({ type: Boolean, required: true })
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from '@renderer/components/ui/sheet'
+import { useAppStore } from '@renderer/stores/appStore'
+
+const store = useAppStore()
 
 const messages = ref('')
 const updating = ref(false)
@@ -76,27 +78,29 @@ const { handleSubmit, resetForm } = useForm({
 
 const onSubmit = handleSubmit(async (values) => {
   await window.electron.addDatasource(values)
-  model.value = false
+  store.isDataSourceFormOpen = false
   resetForm()
 })
 watchEffect(() => {
-  if (!model.value) {
+  if (!store.isDataSourceFormOpen) {
     resetForm()
   }
 })
 </script>
 
 <template>
-  <Dialog v-model:open="model" class="p-0!" >
-    <DialogContent class="sm:max-w-[475px]">
-      <DialogHeader>
-        <DialogTitle>Adicionar datasource</DialogTitle>
-        <DialogDescription> Parámetros de conexión. </DialogDescription>
-      </DialogHeader>
-
+  <Sheet v-model:open="store.isDataSourceFormOpen" class="p-0!">
+    <SheetTrigger></SheetTrigger>
+    <SheetContent side="bottom" class="rounded-t-lg">
+      <SheetHeader>
+        <SheetTitle>Adicionar datasource</SheetTitle>
+        <SheetDescription> Parámetros de conexión.</SheetDescription>
+      </SheetHeader>
       <form class="w-full flex flex-col" @submit="onSubmit">
         <CardContent class="grid grid-cols-2 gap-2 overflow-y-auto">
-
+          <div>
+            <BinarySelect />
+          </div>
           <div>
             <FormField v-slot="{ componentField }" name="dbName">
               <FormItem>
@@ -107,9 +111,6 @@ watchEffect(() => {
                 <FormMessage />
               </FormItem>
             </FormField>
-          </div>
-          <div>
-            <BinarySelect />
           </div>
           <div>
             <FormField v-slot="{ componentField }" name="password">
@@ -158,15 +159,14 @@ watchEffect(() => {
           </div>
         </CardContent>
       </form>
-
-      <DialogFooter class="gap-0">
+      <SheetFooter>
         <Button @click="onSubmit" :disabled="updating">
           <ReloadIcon class="w-4 h-4 mr-2 animate-spin" v-if="updating" />
           Aceptar
         </Button>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
+      </SheetFooter>
+    </SheetContent>
+  </Sheet>
 </template>
 
 <style scoped></style>
