@@ -12,6 +12,7 @@ export const useAppStore = defineStore('appStore', () => {
   const isDataSourceFormOpen = ref(false)
   const isSyncOpen = ref(false)
   const currentUsbDrive = ref('')
+
   function showConsole() {
     isConsoleOpen.value = true
   }
@@ -49,18 +50,20 @@ export const useAppStore = defineStore('appStore', () => {
   ) {
     const formValues = {
       ...options,
-      dsName: currentConexionValues.value.dsName,
-      backupPath: currentConexionValues.value?.backupPath ?? window.electron.showFilePath(file)
+      dsName: options.dsName ?? currentConexionValues.value.dsName,
+      backupPath: file
+        ? window.electron.showFilePath(file)
+        : currentConexionValues.value?.backupPath
     }
-    console.log(formValues,'values')
-    console.log(options,'op')
-    console.log(file,'aa')
-    // if (newDb) {
-    //   window.electron.createDb(formValues, formValues)
-    // } else {
-    //   window.electron.restoreDb(formValues)
-    // }
-    console.log(formValues)
+    console.log(formValues, 'values')
+    console.log(options, 'op')
+    console.log(file, 'aa')
+    if (newDb) {
+      window.electron.createDb(formValues, formValues)
+    } else {
+      window.electron.restoreDb(formValues)
+    }
+
     //limpiar este valor que solo se setea cuando se obtiene por arg del prog (cuando se abre un archivo.backup)
     if (currentConexionValues.value?.backupPath) {
       currentConexionValues.value.backupPath = null
@@ -71,9 +74,10 @@ export const useAppStore = defineStore('appStore', () => {
     isBackupOpen.value = false
   }
 
-  function openDataSourceForm(ds: DataSource=null) {
+  function openDataSourceForm(ds: DataSource = null) {
     isDataSourceFormOpen.value = true
   }
+
   function openAbout() {
     isAboutOpen.value = true
   }
@@ -84,11 +88,11 @@ export const useAppStore = defineStore('appStore', () => {
   }
 
   const handleBakupOnStart = async () => {
-   await window.electron.getFileArg().then((data) => {
+    await window.electron.getFileArg().then((data) => {
       console.log(data, 'la data')
       if (data !== null) {
         currentConexionValues.value.dbName = ''
-        currentConexionValues.value.dsName = 'local'
+        currentConexionValues.value.dsName = ''
         currentConexionValues.value.backupPath = data
         isRestoreOpen.value = true
         //setFieldValue('backupPath', { path: data })

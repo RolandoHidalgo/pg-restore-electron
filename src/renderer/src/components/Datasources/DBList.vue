@@ -53,7 +53,7 @@ const currentDbs = computed(()=>{
     <Collapsible class="group/collapsible">
       <CollapsibleTrigger as-child>
         <SidebarMenuButton>
-          <Database class="text-teal-400"/>
+          <Database class="text-blue-600"/>
           {{ db }}
           <Plus class="ml-auto group-data-[state=open]/collapsible:hidden" />
           <Minus class="ml-auto group-data-[state=closed]/collapsible:hidden" />

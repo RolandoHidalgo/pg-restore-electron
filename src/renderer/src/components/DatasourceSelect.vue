@@ -23,7 +23,7 @@ const {datasources} = useDataSource()
 </script>
 
 <template>
-  <FormField v-slot="{ componentField }" name="datasource">
+  <FormField v-slot="{ componentField }" name="dsName">
     <FormItem>
       <FormLabel>Datasource.</FormLabel>
 

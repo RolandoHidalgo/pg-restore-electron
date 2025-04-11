@@ -16,6 +16,7 @@ const {dbs} = useDbs(()=>props.dsName)
   <FormField
     v-slot="{ componentField }"
     name="dbName"
+    class="w-full"
   >
     <FormItem>
       <FormLabel>Db name.</FormLabel>

@@ -32,6 +32,7 @@ import NewDbForm from '@renderer/components/NewDbForm.vue'
 import { Switch } from '@renderer/components/ui/switch'
 import { Label } from '@renderer/components/ui/label'
 import DatasourceSelect from '@renderer/components/DatasourceSelect.vue'
+import DbSelect from '@renderer/components/DbSelect.vue'
 
 const store = useAppStore()
 const isConsoleOpen = ref(false)
@@ -67,7 +68,7 @@ const coneccionSchema = z.object({
 })
 
 const conDsSchema = z.object({
-  datasource: z
+  dsName: z
     .string({
       required_error: 'Requerido.'
     })
@@ -101,7 +102,7 @@ const onSubmit = handleSubmit((values) => {
     const fileInputElement = document.getElementById('file_input')
     console.log(values)
 
-    store.restoreDb(values, newDb.value, fileInputElement.files[0])
+    store.restoreDb(values, newDb.value, fileInputElement?.files?.[0])
     isConsoleOpen.value = true
   } else {
     store.isRestoreOpen = false
@@ -118,7 +119,12 @@ watchEffect(() => {
     store.currentConexionValues.backupPath = null
     resetForm()
     setFieldValue('backupPath', undefined)
+    isRestoring.value = false
   }
+})
+const currentDsName = computed(()=>{
+  const ccv = store.currentConexionValues.dsName;
+  return ccv !== '' ? ccv : values.dsName
 })
 watchEffect(() => {
   if (store.currentConexionValues.backupPath && !values.backupPath) {
@@ -155,7 +161,11 @@ watchEffect(() => {
           <div v-if="store.currentConexionValues.backupPath" class="col-span-2">
             <DatasourceSelect />
           </div>
-          <div class="col-span-2">
+          <div class="col-span-2" v-if="!newDb">
+            <DbSelect  :ds-name="currentDsName ?? ''" />
+          </div>
+
+          <div  v-else>
             <FormField v-slot="{ componentField }" name="dbName">
               <FormItem>
                 <FormLabel>DB</FormLabel>
@@ -166,16 +176,17 @@ watchEffect(() => {
               </FormItem>
             </FormField>
           </div>
+
           <NewDbForm v-if="newDb" />
 
           <div class="col-span-2">
             <FormField v-slot="{ handleChange, handleBlur }" name="backupPath">
               <FormItem>
                 <FormLabel>Backup file</FormLabel>
-                <FormControl>
+                <FormControl v-if="!isFileSelected">
                   <Input id="file_input" type="file" @change="handleChange" @blur="handleBlur" />
                 </FormControl>
-                <FormDescription v-if="isFileSelected">
+                <FormDescription v-else>
                   Archivo seleccionado {{ store.currentConexionValues.backupPath }}
                 </FormDescription>
                 <FormMessage />
