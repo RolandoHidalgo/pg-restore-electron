@@ -26,7 +26,7 @@ jobs:
         run: npm install -g pnpm
 
       - name: Compile Electron App
-        uses: x6Pnda/action-electron-compiler@v1
+        uses: x6Pnda/action-electron-compiler@v1.0.1
         with:
             # GitHub token, automatically provided to the action
             # (Optional)
