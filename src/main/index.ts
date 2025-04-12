@@ -55,9 +55,9 @@ function createWindow(): void {
     }
   })
 
-  function sendStatusToWindow(updateEvent, text) {
+  function sendStatusToWindow(updateEvent, text,bps=null,total=null,percent=null,transferred=null) {
     log.info(text)
-    mainWindow.webContents.send('update-logs', {updateEvent, text})
+    mainWindow.webContents.send('update-logs', {updateEvent, text,bps,percent,total,transferred})
   }
 
   autoUpdater.on('checking-for-update', () => {
@@ -76,7 +76,8 @@ function createWindow(): void {
     let log_message = 'Download speed: ' + progressObj.bytesPerSecond
     log_message = log_message + ' - Downloaded ' + progressObj.percent + '%'
     log_message = log_message + ' (' + progressObj.transferred + '/' + progressObj.total + ')'
-    sendStatusToWindow('progress', log_message)
+    //sendStatusToWindow('progress', 'log_message', 102654, (94371840/1024/1024), 10.4543345, )
+    sendStatusToWindow('progress', log_message, progressObj.bytesPerSecond, Number(progressObj.total)/1024/1024, Number(progressObj.percent),(parseFloat( String(progressObj.transferred))/1024/1024).toFixed(2))
   })
   autoUpdater.on('update-downloaded', (info) => {
     sendStatusToWindow('Update_downloaded', 'Update_downloaded')
@@ -142,8 +143,11 @@ app.whenReady().then(() => {
   ipcMain.handle('obtener-version', async () => {
     return app.getVersion()
   });
+
+
   ipcMain.on('check-update', (event) => {
     autoUpdater.checkForUpdatesAndNotify()
+
 
   })
 

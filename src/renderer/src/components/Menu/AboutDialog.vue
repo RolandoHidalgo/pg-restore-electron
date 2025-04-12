@@ -27,18 +27,26 @@ import {
 import { DatabaseBackup, Network, Unplug } from 'lucide-vue-next'
 import RestoreConsole from '@renderer/components/restore-console.vue'
 import { useAppStore } from '@renderer/stores/appStore'
+import { Progress } from '@renderer/components/ui/progress'
 
 const store = useAppStore()
 
 const messages = ref('')
 const updating = ref(false)
 const version = ref('');
+const progresData = ref({
+  bps:null,percent:null,total:null,transferred:null
+})
 onMounted(async () => {
 
-  window.electron.handleUpdateInfo((e, { updateEvent, text }) => {
+  window.electron.handleUpdateInfo((e, { updateEvent, text,bps,percent,total,transferred }) => {
     messages.value = text
     if (updateEvent === 'Error' || updateEvent === 'Update_not_available' || updateEvent === 'Update_downloaded') {
       updating.value = false
+    }
+    if(percent){
+      progresData.value = {bps,percent,total,transferred}
+      messages.value = `${bps}B/s - ${transferred}/${total}MB`
     }
 
   })
@@ -81,7 +89,17 @@ const checkUpdates = () => {
           </Button>
         </a>
       </div>
-      {{ messages }}
+      <div v-if="progresData.percent" class="px-2">
+        <p class="text-sm font-medium leading-none">
+          <Progress :model-value="progresData.percent" />
+        </p>
+        <p class="text-sm text-muted-foreground">
+          {{ messages }}
+        </p>
+      </div>
+      <template v-else>
+        {{ messages }}
+      </template>
       <div class="flex justify-end space-x-4 text-sm text-muted-foreground mb-0 px-3">
         <div>
           Created and maintained by
