@@ -5,7 +5,13 @@ import { DataSource } from '../../../main/utils/restore/dataSourceUtils'
 
 export const useAppStore = defineStore('appStore', () => {
   const isConsoleOpen = ref(false)
-  const currentConexionValues = ref({ dsName: '', dbName: '', schema: '', backupPath: null })
+  const currentConexionValues = ref({
+    dsName: '',
+    dbName: '',
+    schema: '',
+    backupPath: null,
+    isClone: false
+  })
   const isRestoreOpen = ref(false)
   const isBackupOpen = ref(false)
   const isAboutOpen = ref(false)
@@ -34,6 +40,13 @@ export const useAppStore = defineStore('appStore', () => {
     isRestoreOpen.value = true
   }
 
+  function openClone(dsName: string, dbName: string = ''): void {
+    currentConexionValues.value.dbName = dbName
+    currentConexionValues.value.dsName = dsName
+    currentConexionValues.value.isClone = true
+    isRestoreOpen.value = true
+  }
+
   function createBackup() {
     const formValues = {
       ...currentConexionValues.value,
@@ -58,7 +71,9 @@ export const useAppStore = defineStore('appStore', () => {
     console.log(formValues, 'values')
     console.log(options, 'op')
     console.log(file, 'aa')
-    if (newDb) {
+    if (currentConexionValues.value.isClone) {
+      window.electron.cloneDb(formValues, formValues)
+    } else if (newDb) {
       window.electron.createDb(formValues, formValues)
     } else {
       window.electron.restoreDb(formValues)
@@ -68,6 +83,21 @@ export const useAppStore = defineStore('appStore', () => {
     if (currentConexionValues.value?.backupPath) {
       currentConexionValues.value.backupPath = null
     }
+  }
+
+  function cloneDb(
+    options: Pick<DbOptions, 'dbName' | 'dsName' | 'targetCloneDbName'> &
+      Omit<CreateDebOptions, 'name'>
+  ) {
+    options.targetCloneDbName = options.dbName
+    options.dbName = currentConexionValues.value.dbName
+    const formValues = {
+      ...options,
+      dsName: options.dsName ?? currentConexionValues.value.dsName,
+      backupPath: null
+    }
+
+    window.electron.cloneDb(formValues, formValues)
   }
 
   function closeBackup() {
@@ -117,6 +147,8 @@ export const useAppStore = defineStore('appStore', () => {
     isSyncOpen,
     currentUsbDrive,
     openSync,
-    handleBakupOnStart
+    handleBakupOnStart,
+    openClone,
+    cloneDb
   }
 })

@@ -8,7 +8,8 @@ const useApp = () => {
     openBackup: store.openBackup,
     openRestore: store.openRestore,
     isBackupOpen: store.isBackupOpen,
-    currentConexionValues:store.currentConexionValues
+    currentConexionValues:store.currentConexionValues,
+    openClone: store.openClone,
   }
 }
 

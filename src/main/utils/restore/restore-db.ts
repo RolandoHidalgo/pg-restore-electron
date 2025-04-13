@@ -20,6 +20,7 @@ export type DbOptions = {
   backUpName?: string;
   dsName?: string;
   schema?: string;
+  targetCloneDbName?: string;
 }
 
 export type CreateDebOptions = {
@@ -150,54 +151,57 @@ const getDatabaseSchamasByDatasourceAndDbName = async (dsName: string, dbName: s
   const ds: DataSource = getDatasource(dsName);
   return obtenerEsquemas(ds, dbName);
 }
-const backupDb = (dbOptions: DbOptions, event: IpcMainEvent) => {
-  const {dbName, host, password, port, user, binary, schema} = dbOptions;
+const backupDb = (dbOptions: DbOptions, event: IpcMainEvent):Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const {dbName, host, password, port, user, binary, schema} = dbOptions;
 
 
-  const backUpDir = path.join(os.homedir(), "pgRestore", "backups");
-  if (!fs.existsSync(backUpDir)) {
-    fs.mkdirSync(backUpDir);
-  }
+    const backUpDir = path.join(os.homedir(), "pgRestore", "backups");
+    if (!fs.existsSync(backUpDir)) {
+      fs.mkdirSync(backUpDir);
+    }
 
-  const schemmaName = (schema && schema != '') ? `_${schema}` : '';
-  const schammaParams = (schema && schema != '') ? ` --schema "${schema}"` : '';
-  const backupFullName = `${dbName}${schemmaName}_${getFormattedDateTime()}.backup`;
-  const backupPath = path.join(backUpDir, backupFullName)
+    const schemmaName = (schema && schema != '') ? `_${schema}` : '';
+    const schammaParams = (schema && schema != '') ? ` --schema "${schema}"` : '';
+    const backupFullName = `${dbName}${schemmaName}_${getFormattedDateTime()}.backup`;
+    const backupPath = path.join(backUpDir, backupFullName)
 
-  //const params = `-F c --host ${host} --port ${port} --username ${user} --role postgres --dbname ${dbName}`;
-  let params = `--file ${path.normalize(backupPath)} --host ${host} --port ${port} --username ${user} --format=c --verbose${schammaParams} ${dbName}`;
+    //const params = `-F c --host ${host} --port ${port} --username ${user} --role postgres --dbname ${dbName}`;
+    let params = `--file ${path.normalize(backupPath)} --host ${host} --port ${port} --username ${user} --format=c --verbose${schammaParams} ${dbName}`;
 
-  console.log(params);
-  console.log(backupFullName);
-  console.log(backupPath);
-  const paramsSplitted = params.toString().split(" ");
-  //paramsSplitted.push(path.normalize(backupPath));
+    console.log(params);
+    console.log(backupFullName);
+    console.log(backupPath);
+    const paramsSplitted = params.toString().split(" ");
+    //paramsSplitted.push(path.normalize(backupPath));
 
 
-  const exe = path.join(binary, 'pg_dump.exe');
-  console.log(exe, paramsSplitted);
-  const bat = spawn(exe, paramsSplitted, {env: {...process.env, PGPASSWORD: password}});
-  getBrowserWindow(event)?.setProgressBar(2);
-  bat.stdout.setEncoding("utf8");
-  bat.stdout.on("data", (data: any) => {
-    console.log("data", data.toString());
-    event.sender.send("restore-logs", data.toString());
-  });
-  bat.stderr.setEncoding("utf8");
-  bat.stderr.on("data", (data: any) => {
-    console.log("error", data.toString());
-    event.sender.send("restore-logs", data.toString());
-  });
+    const exe = path.join(binary, 'pg_dump.exe');
+    console.log(exe, paramsSplitted);
+    const bat = spawn(exe, paramsSplitted, {env: {...process.env, PGPASSWORD: password}});
+    getBrowserWindow(event)?.setProgressBar(2);
+    bat.stdout.setEncoding("utf8");
+    bat.stdout.on("data", (data: any) => {
+      console.log("data", data.toString());
+      event.sender.send("restore-logs", data.toString());
+    });
+    bat.stderr.setEncoding("utf8");
+    bat.stderr.on("data", (data: any) => {
+      console.log("error", data.toString());
+      event.sender.send("restore-logs", data.toString());
+    });
 
-  bat.on("exit", (code: any) => {
-    console.log(`Child exited with code ${code}`);
-    event.sender.send("restore-logs", `finish-OK`);
-    postBackupHook()
-  });
-  bat.on("error", (code: any) => {
-    console.log(`error ${code}`);
-    event.sender.send("restore-logs", `error ${code}`);
-  });
+    bat.on("exit", (code: any) => {
+      console.log(`Child exited with code ${code}`);
+      event.sender.send("restore-logs", `finish-OK`);
+      postBackupHook()
+      resolve(backupPath)
+    });
+    bat.on("error", (code: any) => {
+      console.log(`error ${code}`);
+      event.sender.send("restore-logs", `error ${code}`);
+    });
+  })
 };
 
 
@@ -260,6 +264,14 @@ const createDb = (dbOptions: DbOptions, createDbOptions: CreateDebOptions, event
 
 };
 
+const cloneDb = async (dbOptions: DbOptions, createDbOptions: CreateDebOptions, event: IpcMainEvent)=>{
+  dbOptions.backupPath =  await backupDb(dbOptions,event)
+  console.log("backup backup database", dbOptions);
+  dbOptions.dbName = dbOptions.targetCloneDbName
+  console.log("backup backup database", dbOptions);
+  createDb(dbOptions,createDbOptions,event);
+}
+
 
 const restoreFinishActions = (event: IpcMainEvent) => {
   //probar con el nistallIcon pero no es la solucion final
@@ -283,5 +295,6 @@ export {
   createDb,
   backupDb,
   getDatabaseByDatasource,
-  getDatabaseSchamasByDatasourceAndDbName
+  getDatabaseSchamasByDatasourceAndDbName,
+  cloneDb
 };

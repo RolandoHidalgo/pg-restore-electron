@@ -11,7 +11,7 @@ import {
   createDb,
   backupDb,
   getDatabaseByDatasource,
-  getDatabaseSchamasByDatasourceAndDbName
+  getDatabaseSchamasByDatasourceAndDbName, cloneDb
 } from './utils/restore/restore-db'
 import {findBinarys} from './utils/restore/binariesUtils'
 import { initReposAndFolders, sincronizarUsb } from './utils/restore/gitUtils'
@@ -133,6 +133,12 @@ app.whenReady().then(() => {
   ipcMain.on('create-db', (event, dbOptions, createDbOptions) => {
     console.log('create-db', dbOptions)
     createDb(dbOptions, createDbOptions, event)
+
+  })
+
+  ipcMain.on('clone-db', (event, dbOptions, createDbOptions) => {
+    console.log('clone-db', dbOptions)
+    cloneDb(dbOptions, createDbOptions, event)
 
   })
 

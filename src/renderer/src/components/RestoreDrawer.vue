@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Button } from '@renderer/components/ui/button'
-import { computed, onBeforeMount, onMounted, ref, watchEffect } from 'vue'
-import { ReloadIcon } from '@radix-icons/vue'
+import { computed, ref, watchEffect } from 'vue'
 import { z } from 'zod'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
@@ -14,7 +13,6 @@ import {
   FormMessage
 } from '@renderer/components/ui/form'
 
-import BinarySelect from '@renderer/components/BinarySelect.vue'
 import { CardContent } from '@renderer/components/ui/card'
 import { Input } from '@renderer/components/ui/input'
 import { useAppStore } from '@renderer/stores/appStore'
@@ -30,7 +28,6 @@ import {
 import RestoreConsole from '@renderer/components/restore-console.vue'
 import NewDbForm from '@renderer/components/NewDbForm.vue'
 import { Switch } from '@renderer/components/ui/switch'
-import { Label } from '@renderer/components/ui/label'
 import DatasourceSelect from '@renderer/components/DatasourceSelect.vue'
 import DbSelect from '@renderer/components/DbSelect.vue'
 
@@ -68,27 +65,21 @@ const coneccionSchema = z.object({
 })
 
 const conDsSchema = z.object({
-  dsName: z
-    .string({
-      required_error: 'Requerido.'
-    })
+  dsName: z.string({
+    required_error: 'Requerido.'
+  })
 })
 
-// onBeforeMount(() => {
-//   window.electron.getFileArg().then((data) => {
-//     console.log(data, 'la data')
-//     if (data !== null) {
-//       setFieldValue('backupPath', { path: data })
-//     }
-//   })
-// })
 const currentSchema = computed(() => {
   let schema = coneccionSchema
   if (store.currentConexionValues.backupPath) {
-   schema = schema.merge(conDsSchema)
+    schema = schema.merge(conDsSchema)
   }
   if (newDb.value) {
     schema = schema.merge(newDbSchema)
+  }
+  if (store.currentConexionValues.isClone) {
+    return schema.omit({ backupPath: true }).passthrough()
   }
   return schema.passthrough()
 })
@@ -101,8 +92,12 @@ const onSubmit = handleSubmit((values) => {
     isRestoring.value = true
     const fileInputElement = document.getElementById('file_input')
     console.log(values)
+    if (store.currentConexionValues.isClone) {
+      store.cloneDb(values)
+    } else {
+      store.restoreDb(values, newDb.value, fileInputElement?.files?.[0])
+    }
 
-    store.restoreDb(values, newDb.value, fileInputElement?.files?.[0])
     isConsoleOpen.value = true
   } else {
     store.isRestoreOpen = false
@@ -120,16 +115,21 @@ watchEffect(() => {
     resetForm()
     setFieldValue('backupPath', undefined)
     isRestoring.value = false
+    store.currentConexionValues.isClone = false
+    newDb.value = false
   }
 })
-const currentDsName = computed(()=>{
-  const ccv = store.currentConexionValues.dsName;
+const currentDsName = computed(() => {
+  const ccv = store.currentConexionValues.dsName
   return ccv !== '' ? ccv : values.dsName
 })
 watchEffect(() => {
   if (store.currentConexionValues.backupPath && !values.backupPath) {
     console.log(store.currentConexionValues.backupPath, 'dentro')
     setFieldValue('backupPath', { path: store.currentConexionValues.backupPath })
+  }
+  if (store.currentConexionValues.isClone) {
+    newDb.value = true
   }
 })
 </script>
@@ -144,16 +144,19 @@ watchEffect(() => {
       </SheetHeader>
       <form class="w-full flex flex-col pb-0" @submit="onSubmit">
         <CardContent class="grid grid-cols-2 gap-2 overflow-y-auto pb-0" v-if="!isConsoleOpen">
-
           <div class="col-span-2">
             <FormField name="newDb">
               <FormItem class="flex flex-row items-center justify-between rounded-lg border p-4">
                 <div class="space-y-0.5">
                   <FormLabel class="text-base"> Nueva</FormLabel>
-                  <FormDescription>   Crear una nueva db.</FormDescription>
+                  <FormDescription> Crear una nueva db.</FormDescription>
                 </div>
                 <FormControl>
-                  <Switch id="new-db" v-model:checked="newDb" />
+                  <Switch
+                    id="new-db"
+                    v-model:checked="newDb"
+                    :disabled="store.currentConexionValues.isClone"
+                  />
                 </FormControl>
               </FormItem>
             </FormField>
@@ -162,10 +165,10 @@ watchEffect(() => {
             <DatasourceSelect />
           </div>
           <div class="col-span-2" v-if="!newDb">
-            <DbSelect  :ds-name="currentDsName ?? ''" />
+            <DbSelect :ds-name="currentDsName ?? ''" />
           </div>
 
-          <div  v-else>
+          <div v-else>
             <FormField v-slot="{ componentField }" name="dbName">
               <FormItem>
                 <FormLabel>DB</FormLabel>
@@ -179,7 +182,7 @@ watchEffect(() => {
 
           <NewDbForm v-if="newDb" />
 
-          <div class="col-span-2">
+          <div class="col-span-2" v-if="!store.currentConexionValues.isClone">
             <FormField v-slot="{ handleChange, handleBlur }" name="backupPath">
               <FormItem>
                 <FormLabel>Backup file</FormLabel>

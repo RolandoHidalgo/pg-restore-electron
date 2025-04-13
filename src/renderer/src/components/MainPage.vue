@@ -51,40 +51,6 @@ const search = ref('')
         <SidebarMenu>
           <DBList :ds-name="currentDs" :search="search"></DBList>
         </SidebarMenu>
-
-        <!--        <SidebarMenu>-->
-        <!--          <SidebarMenuItem v-for="(item, index) in datasources" :key="item.name">-->
-        <!--            <Collapsible :default-open="index === 0" class="group/collapsible">-->
-        <!--              <CollapsibleTrigger as-child>-->
-        <!--                <SidebarMenuButton>-->
-        <!--                  <Unplug class="text-primary"/>-->
-        <!--                  {{ item.text }}-->
-        <!--                  <Plus class="ml-auto group-data-[state=open]/collapsible:hidden"/>-->
-        <!--                  <Minus class="ml-auto group-data-[state=closed]/collapsible:hidden"/>-->
-        <!--                </SidebarMenuButton>-->
-        <!--              </CollapsibleTrigger>-->
-        <!--              <CollapsibleContent>-->
-        <!--                <SidebarMenuSub>-->
-        <!--                  <DBList :ds-name="item.name"/>-->
-        <!--                </SidebarMenuSub>-->
-        <!--              </CollapsibleContent>-->
-        <!--            </Collapsible>-->
-        <!--            <DropdownMenu>-->
-        <!--              <DropdownMenuTrigger as-child>-->
-        <!--                <SidebarMenuAction show-on-hover>-->
-        <!--                  <MoreHorizontal/>-->
-        <!--                  <span class="sr-only">More</span>-->
-        <!--                </SidebarMenuAction>-->
-        <!--              </DropdownMenuTrigger>-->
-        <!--              <DropdownMenuContent class="w-26 rounded-lg" side="bottom" align="end">-->
-        <!--                <DropdownMenuItem @click="store.openRestore(item.name)">-->
-        <!--                  <DatabaseZap class="text-muted-foreground"/>-->
-        <!--                  <span>Restore</span>-->
-        <!--                </DropdownMenuItem>-->
-        <!--              </DropdownMenuContent>-->
-        <!--            </DropdownMenu>-->
-        <!--          </SidebarMenuItem>-->
-        <!--        </SidebarMenu>-->
       </SidebarGroupContent>
     </SidebarGroup>
   </SidebarContent>

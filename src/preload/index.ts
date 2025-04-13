@@ -68,7 +68,19 @@ const api = {
     console.log(dbOptions, 'optionss')
     return ipcRenderer.send('create-db', dbOptions, createDbOptions)
   },
+  cloneDb: (dbOptions: DbOptions, createDbOptions) => {
+    const ds: DataSource | undefined = getDatasources().filter(
+      (e) => e.name === dbOptions.dsName
+    )[0]
 
+    dbOptions.user = ds?.username
+    dbOptions.password = ds?.password
+    dbOptions.host = ds?.host
+    dbOptions.binary = ds?.binary
+    dbOptions.port = ds?.port
+    console.log(dbOptions, 'optionss')
+    return ipcRenderer.send('clone-db', dbOptions, createDbOptions)
+  },
   restoreFinish: () => ipcRenderer.send('restore-finish'),
   //updateInfo: (event,data) => ipcRenderer.send(event,data),
   handleRestoreConsoleEvent: (callback) => ipcRenderer.on('restore-logs', callback),

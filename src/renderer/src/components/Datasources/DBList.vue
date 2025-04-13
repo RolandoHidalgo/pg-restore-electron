@@ -14,11 +14,8 @@ import {
   Minus,
   Plus,
   Database,
-  ArrowUpRight,
-  Link,
+  Copy,
   MoreHorizontal,
-  StarOff,
-  Trash2,
   DatabaseBackup,
   DatabaseZap
 } from 'lucide-vue-next'
@@ -31,11 +28,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@renderer/components/ui/dropdown-menu'
-import {computed, ref, watchEffect} from 'vue'
+import {computed,  watchEffect} from 'vue'
 
 const props = defineProps<{ dsName: string,search:string }>()
 const { dbs } = useDbs(() => props.dsName)
-const {openBackup,openRestore}=useApp()
+const {openBackup,openRestore,openClone}=useApp()
 watchEffect(()=>{
   console.log(props.search)
 })
@@ -82,6 +79,11 @@ const currentDbs = computed(()=>{
         <DropdownMenuItem @click="openRestore(props.dsName,db)">
           <DatabaseZap class="text-muted-foreground" />
           <span>Restore</span>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem @click="openClone(props.dsName,db)">
+          <Copy class="text-muted-foreground" />
+          <span>Clone to</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
