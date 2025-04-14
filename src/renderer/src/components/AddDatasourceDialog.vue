@@ -28,9 +28,10 @@ import {
   SheetTrigger
 } from '@renderer/components/ui/sheet'
 import { useAppStore } from '@renderer/stores/appStore'
+import { useDataSourceStore } from '@renderer/stores/datasourceStore'
 
 const store = useAppStore()
-
+const dsStore = useDataSourceStore()
 const messages = ref('')
 const updating = ref(false)
 
@@ -43,7 +44,7 @@ const coneccionSchema = z.object({
       required_error: 'Requerido.'
     })
     .min(1, { message: 'no vacio' }),
-  user: z
+  username: z
     .string({
       required_error: 'Requerido.'
     })
@@ -55,22 +56,22 @@ const coneccionSchema = z.object({
     })
     .min(1, { message: 'no vacio' }),
   port: z
-    .string({
+    .number({
       required_error: 'Requerido.'
     })
     .min(1, { message: 'no vacio' }),
-  dbName: z
+  name: z
     .string({
       required_error: 'Requerido.'
     })
     .min(1, { message: 'no vacio' })
 })
 const initVals = {
-  port: '5432',
+  port: 5432,
   host: 'localhost',
-  user: 'postgres'
+  username: 'postgres'
 }
-const { handleSubmit, resetForm } = useForm({
+const { handleSubmit, resetForm, values, setValues } = useForm({
   validationSchema: computed(() => toTypedSchema(coneccionSchema.passthrough())),
   initialValues: initVals,
   keepValuesOnUnmount: true
@@ -78,13 +79,35 @@ const { handleSubmit, resetForm } = useForm({
 
 const onSubmit = handleSubmit(async (values) => {
   await window.electron.addDatasource(values)
+  dsStore.loadDataSources()
   store.isDataSourceFormOpen = false
   resetForm()
 })
 watchEffect(() => {
   if (!store.isDataSourceFormOpen) {
+    console.log('limpiar')
+    store.currentDsForm = null
     resetForm()
   }
+  // else {
+  //   if (store.currentDsForm) {
+
+  //   }
+  // }
+})
+const handleReset = () => {
+  console.log('limpiar')
+  resetForm({ values: { ...initVals } })
+}
+store.$onAction(({ name, after }) => {
+  after(() => {
+    if (name === 'openDataSourceForm') {
+      console.log('seteando', store.currentDsForm)
+      setValues({ ...store.currentDsForm })
+      //resetForm({ values:  })
+      store.currentDsForm = null
+    }
+  })
 })
 </script>
 
@@ -94,7 +117,7 @@ watchEffect(() => {
     <SheetContent side="bottom" class="rounded-t-lg">
       <SheetHeader>
         <SheetTitle>Adicionar datasource</SheetTitle>
-        <SheetDescription> Parámetros de conexión.</SheetDescription>
+        <SheetDescription> store-{{ store.currentDsForm }}/values-{{ values }}</SheetDescription>
       </SheetHeader>
       <form class="w-full flex flex-col" @submit="onSubmit">
         <CardContent class="grid grid-cols-2 gap-2 overflow-y-auto">
@@ -102,7 +125,7 @@ watchEffect(() => {
             <BinarySelect />
           </div>
           <div>
-            <FormField v-slot="{ componentField }" name="dbName">
+            <FormField v-slot="{ componentField }" name="name">
               <FormItem>
                 <FormLabel>Nombre</FormLabel>
                 <FormControl>
@@ -125,7 +148,7 @@ watchEffect(() => {
             </FormField>
           </div>
           <div>
-            <FormField v-slot="{ componentField }" name="user">
+            <FormField v-slot="{ componentField }" name="username">
               <FormItem>
                 <FormLabel>User</FormLabel>
                 <FormControl>

@@ -27,7 +27,7 @@ const handleSearch = (event: string): void => {
         </Label>
         <SidebarInput
           id="search"
-          placeholder="Search the docs..."
+          placeholder="Search db..."
           class="pl-8"
           @input="handleSearch"
           v-model="a"

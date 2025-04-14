@@ -20,7 +20,7 @@ import {handleSquirell} from './utils/restore/regeditUtils'
 
 import log from 'electron-log'
 import {autoUpdater} from 'electron-updater'
-import {addDatasources, DataSource, getDatasources} from "./utils/restore/dataSourceUtils";
+import { addDatasources, DataSource, getDatasources, setDafaultDatasource } from './utils/restore/dataSourceUtils'
 import { getUSBDrives } from './utils/restore/drivesUtils'
 
 try{
@@ -144,6 +144,9 @@ app.whenReady().then(() => {
 
   ipcMain.handle('add-datasource', async (event, ds: DataSource) => {
     await addDatasources(ds)
+  })
+  ipcMain.handle('set-default-ds', async (event, dsName:string) => {
+    await setDafaultDatasource(dsName)
   })
 
   ipcMain.handle('obtener-version', async () => {

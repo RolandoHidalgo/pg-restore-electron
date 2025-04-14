@@ -18,6 +18,7 @@ export const useAppStore = defineStore('appStore', () => {
   const isDataSourceFormOpen = ref(false)
   const isSyncOpen = ref(false)
   const currentUsbDrive = ref('')
+  const currentDsForm = ref<DataSource|null>(null)
 
   function showConsole() {
     isConsoleOpen.value = true
@@ -105,6 +106,10 @@ export const useAppStore = defineStore('appStore', () => {
   }
 
   function openDataSourceForm(ds: DataSource = null) {
+
+    if(ds){
+      currentDsForm.value = ds
+    }
     isDataSourceFormOpen.value = true
   }
 
@@ -149,6 +154,7 @@ export const useAppStore = defineStore('appStore', () => {
     openSync,
     handleBakupOnStart,
     openClone,
-    cloneDb
+    cloneDb,
+    currentDsForm
   }
 })

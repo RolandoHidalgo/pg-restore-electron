@@ -13,14 +13,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '@renderer/components/ui/sidebar'
-import { ChevronsUpDown,  DatabaseZap,  Plus, Unplug } from 'lucide-vue-next'
-import {type Component, computed, ref, watchEffect} from 'vue'
+import { ChevronsUpDown,  DatabaseZap,  Plus, Unplug,Star,Pencil } from 'lucide-vue-next'
+import { computed, ref, watchEffect} from 'vue'
 import {useDataSource} from "@renderer/composables";
 
 import { useAppStore } from '@renderer/stores/appStore'
 
-const {datasources} = useDataSource()
-console.log(datasources.value, 'ASDASDASDASDASDASDASD');
+const {datasources,setDefaultDatasource} = useDataSource()
+
 
 const activeDs = ref(datasources.value[0] ?? {name: '', binary: ''})
 const currentBinary = computed(() => {
@@ -33,8 +33,8 @@ watchEffect(() => {
   if (activeDs.value.name === '' && datasources.value[0]) {
 
 
-    activeDs.value = datasources.value[0]
-    emit('change', datasources.value[0].name)
+    activeDs.value = datasources.value.filter(d => d.isDefault)[0] ?? datasources.value[0]
+    emit('change',activeDs.value.name)
 
 
   }
@@ -45,6 +45,7 @@ const handleActiveDs = (ds) => {
   activeDs.value = ds
   emit('change', ds.name)
 }
+
 const store = useAppStore()
 </script>
 <template>
@@ -102,12 +103,29 @@ const store = useAppStore()
               Restore
             </div>
           </DropdownMenuItem>
+          <DropdownMenuItem class="gap-2 p-2" @click="setDefaultDatasource(activeDs.name)" >
+            <div class="flex size-6 items-center justify-center rounded-md border bg-background">
+              <Star  class="size-4"/>
+            </div>
+            <div class="font-medium text-muted-foreground">
+              Set default
+            </div>
+          </DropdownMenuItem>
+
           <DropdownMenuItem class="gap-2 p-2" @click="store.openDataSourceForm()">
             <div class="flex size-6 items-center justify-center rounded-md border bg-background">
               <Plus class="size-4"/>
             </div>
             <div class="font-medium text-muted-foreground">
               Add datasource
+            </div>
+          </DropdownMenuItem>
+          <DropdownMenuItem class="gap-2 p-2" @click="store.openDataSourceForm(activeDs)">
+            <div class="flex size-6 items-center justify-center rounded-md border bg-background">
+              <Pencil  class="size-4"/>
+            </div>
+            <div class="font-medium text-muted-foreground">
+              Edit datasource
             </div>
           </DropdownMenuItem>
         </DropdownMenuContent>

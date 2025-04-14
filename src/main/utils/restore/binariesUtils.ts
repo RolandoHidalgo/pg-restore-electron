@@ -13,7 +13,7 @@ const getVersions = (basePath) => {
     return dirs.map(e => {
         const pathToRestore = path.join(basePath, e, 'bin', 'pg_restore.exe');
         const exist = fs.existsSync(pathToRestore);
-        return exist ? {arq, version: e, binary: pathToRestore} : null
+        return exist ? {arq, version: e, binary: path.dirname(pathToRestore)} : null
     }).filter(o => o !== null);
 };
 

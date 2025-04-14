@@ -7,7 +7,10 @@ const useDataSource = () => {
   onMounted(() => {
     dataSourceStore.loadDataSources()
   })
+  function setDefaultDatasource(dsName:string){
+    window.electron.setDefaultDatasource(dsName)
+  }
   const datasources = computed(() => dataSourceStore.dataSources);
-  return { datasources }
+  return { datasources ,setDefaultDatasource}
 }
 export default useDataSource

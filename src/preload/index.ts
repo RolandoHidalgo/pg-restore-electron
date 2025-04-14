@@ -33,17 +33,21 @@ const api = {
     console.log(dbOptions, 'optionss')
     ipcRenderer.send('backup-db', dbOptions)
   },
-  addDatasource: async (dbOptions: DbOptions) => {
-    const ds: DataSource = {
-      name: dbOptions.dbName,
-      binary: path.dirname(dbOptions.binary),
-      password: dbOptions.password,
-      port: Number(dbOptions.port),
-      host: dbOptions.host,
-      username: dbOptions.user
+  addDatasource: async (ds: DataSource) => {
+    const data: DataSource = {
+      name: ds.name,
+      binary: ds.binary,
+      password: ds.password,
+      port: Number(ds.port),
+      host: ds.host,
+      username: ds.username,
+      isDefault: ds.isDefault ?? false
     }
 
-    return ipcRenderer.invoke('add-datasource', ds)
+    return ipcRenderer.invoke('add-datasource', data)
+  },
+  setDefaultDatasource: async (dsName: string) => {
+    return ipcRenderer.invoke('set-default-ds', dsName)
   },
   showFilePath(file) {
     // It's best not to expose the full file path to the web content if
