@@ -178,4 +178,4 @@ const checkAndPrepareUsb = async (usbPath: string): Promise<void> => {
   }
 }
 
-export { initReposAndFolders, postBackupHook, sincronizarUsb }
+export { initReposAndFolders, postBackupHook, sincronizarUsb,execCommand }

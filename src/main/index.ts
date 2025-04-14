@@ -1,8 +1,8 @@
-import {app, shell, BrowserWindow, ipcMain} from 'electron'
-import {join} from 'node:path'
-import {electronApp, optimizer, is} from '@electron-toolkit/utils'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { join } from 'node:path'
+import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.ico?asset'
-import {GlobalConfig} from './utils/restore/GlobalConfig'
+import { GlobalConfig } from './utils/restore/GlobalConfig'
 
 
 import {
@@ -13,19 +13,19 @@ import {
   getDatabaseByDatasource,
   getDatabaseSchamasByDatasourceAndDbName, cloneDb
 } from './utils/restore/restore-db'
-import {findBinarys} from './utils/restore/binariesUtils'
+import { findBinarys, parseBackup } from './utils/restore/binariesUtils'
 import { initReposAndFolders, sincronizarUsb } from './utils/restore/gitUtils'
 // @ts-ignore
-import {handleSquirell} from './utils/restore/regeditUtils'
+import { handleSquirell } from './utils/restore/regeditUtils'
 
 import log from 'electron-log'
-import {autoUpdater} from 'electron-updater'
+import { autoUpdater } from 'electron-updater'
 import { addDatasources, DataSource, getDatasources, setDafaultDatasource } from './utils/restore/dataSourceUtils'
 import { getUSBDrives } from './utils/restore/drivesUtils'
 
-try{
-  initReposAndFolders();
-}catch (e){
+try {
+  initReposAndFolders()
+} catch (e) {
   console.error(e)
 }
 autoUpdater.logger = log
@@ -48,16 +48,16 @@ function createWindow(): void {
     show: false,
     //resizable:false,
     autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? {icon} : {}),
+    ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     }
   })
 
-  function sendStatusToWindow(updateEvent, text,bps=null,total=null,percent=null,transferred=null) {
+  function sendStatusToWindow(updateEvent, text, bps = null, total = null, percent = null, transferred = null) {
     log.info(text)
-    mainWindow.webContents.send('update-logs', {updateEvent, text,bps,percent,total,transferred})
+    mainWindow.webContents.send('update-logs', { updateEvent, text, bps, percent, total, transferred })
   }
 
   autoUpdater.on('checking-for-update', () => {
@@ -77,7 +77,7 @@ function createWindow(): void {
     log_message = log_message + ' - Downloaded ' + progressObj.percent + '%'
     log_message = log_message + ' (' + progressObj.transferred + '/' + progressObj.total + ')'
     //sendStatusToWindow('progress', 'log_message', 102654, (94371840/1024/1024), 10.4543345, )
-    sendStatusToWindow('progress', log_message, progressObj.bytesPerSecond, Number(progressObj.total)/1024/1024, Number(progressObj.percent),(parseFloat( String(progressObj.transferred))/1024/1024).toFixed(2))
+    sendStatusToWindow('progress', log_message, progressObj.bytesPerSecond, Number(progressObj.total) / 1024 / 1024, Number(progressObj.percent), (parseFloat(String(progressObj.transferred)) / 1024 / 1024).toFixed(2))
   })
   autoUpdater.on('update-downloaded', (info) => {
     sendStatusToWindow('Update_downloaded', 'Update_downloaded')
@@ -89,7 +89,7 @@ function createWindow(): void {
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
-    return {action: 'deny'}
+    return { action: 'deny' }
   })
 
   // HMR for renderer base on electron-vite cli.
@@ -109,7 +109,7 @@ app.whenReady().then(() => {
   app.commandLine.appendSwitch('lang', 'es')
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron.pgUI-restore')
-  console.log(app.getVersion(),'la versionnnn');
+  console.log(app.getVersion(), 'la versionnnn')
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
   // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
@@ -120,9 +120,9 @@ app.whenReady().then(() => {
     restoreDb(dbOptions, event)
 
   })
-  ipcMain.on('sincronizar-usb',async (event, usbDrive:string) => {
+  ipcMain.on('sincronizar-usb', async (event, usbDrive: string) => {
 
-    await sincronizarUsb(usbDrive,event)
+    await sincronizarUsb(usbDrive, event)
   })
 
   ipcMain.on('backup-db', (event, dbOptions) => {
@@ -145,13 +145,17 @@ app.whenReady().then(() => {
   ipcMain.handle('add-datasource', async (event, ds: DataSource) => {
     await addDatasources(ds)
   })
-  ipcMain.handle('set-default-ds', async (event, dsName:string) => {
+  ipcMain.handle('set-default-ds', async (event, dsName: string) => {
     await setDafaultDatasource(dsName)
+  })
+
+  ipcMain.handle('parse-backup', async (event, dsName: string, backupPath: strin) => {
+    return  parseBackup(dsName, backupPath)
   })
 
   ipcMain.handle('obtener-version', async () => {
     return app.getVersion()
-  });
+  })
 
 
   ipcMain.on('check-update', (event) => {
@@ -183,15 +187,15 @@ app.whenReady().then(() => {
 
 
   })
-  ipcMain.handle('get-dbs', async (event,name:string) => {
-    console.log('main con name',name)
+  ipcMain.handle('get-dbs', async (event, name: string) => {
+    console.log('main con name', name)
     return getDatabaseByDatasource(name)
 
 
   })
-  ipcMain.handle('get-schemmas', async (event,dsName:string,dbName:string) => {
+  ipcMain.handle('get-schemmas', async (event, dsName: string, dbName: string) => {
 
-    return getDatabaseSchamasByDatasourceAndDbName(dsName,dbName)
+    return getDatabaseSchamasByDatasourceAndDbName(dsName, dbName)
 
 
   })
@@ -204,7 +208,7 @@ app.whenReady().then(() => {
 
   ipcMain.handle('get-datasource', (): DataSource[] => {
 
-    return getDatasources();
+    return getDatasources()
 
 
   })
@@ -218,7 +222,7 @@ app.whenReady().then(() => {
   //   name:'local'
   // })
   // console.log('asdasdldldldldle3333',getDatasources())
-  app.on('activate', function () {
+  app.on('activate', function() {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()

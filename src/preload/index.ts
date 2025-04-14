@@ -46,6 +46,15 @@ const api = {
 
     return ipcRenderer.invoke('add-datasource', data)
   },
+  parseBackup: async (dsName: string, backupPath: File | string) => {
+    let path: File | string;
+    if (typeof backupPath === 'string') {
+      path = backupPath
+    } else {
+      path = webUtils.getPathForFile(backupPath)
+    }
+    return  ipcRenderer.invoke('parse-backup', dsName, path)
+  },
   setDefaultDatasource: async (dsName: string) => {
     return ipcRenderer.invoke('set-default-ds', dsName)
   },

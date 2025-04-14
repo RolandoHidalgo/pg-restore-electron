@@ -117,7 +117,7 @@ store.$onAction(({ name, after }) => {
     <SheetContent side="bottom" class="rounded-t-lg">
       <SheetHeader>
         <SheetTitle>Adicionar datasource</SheetTitle>
-        <SheetDescription> store-{{ store.currentDsForm }}/values-{{ values }}</SheetDescription>
+        <SheetDescription> Parámetros de conexión.</SheetDescription>
       </SheetHeader>
       <form class="w-full flex flex-col" @submit="onSubmit">
         <CardContent class="grid grid-cols-2 gap-2 overflow-y-auto">

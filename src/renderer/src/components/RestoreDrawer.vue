@@ -30,6 +30,9 @@ import NewDbForm from '@renderer/components/NewDbForm.vue'
 import { Switch } from '@renderer/components/ui/switch'
 import DatasourceSelect from '@renderer/components/DatasourceSelect.vue'
 import DbSelect from '@renderer/components/DbSelect.vue'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@renderer/components/ui/hover-card'
+import { CalendarIcon, Info, DatabaseZap } from 'lucide-vue-next'
+import useBackupInfo from '@renderer/composables/useBackupInfo'
 
 const store = useAppStore()
 const isConsoleOpen = ref(false)
@@ -107,7 +110,7 @@ const onSubmit = handleSubmit((values) => {
 const isFileSelected = computed(() => {
   return values.backupPath && values.backupPath.path
 })
-
+const backupInfo = useBackupInfo()
 watchEffect(() => {
   if (!store.isRestoreOpen) {
     isConsoleOpen.value = false
@@ -185,7 +188,39 @@ watchEffect(() => {
           <div class="col-span-2" v-if="!store.currentConexionValues.isClone">
             <FormField v-slot="{ handleChange, handleBlur }" name="backupPath">
               <FormItem>
-                <FormLabel>Backup file</FormLabel>
+                <FormLabel
+                  >Backup file
+                  <HoverCard v-if="backupInfo.dbName !== ''">
+                    <HoverCardTrigger as-child>
+                      <Info class="text-muted-foreground size-4" />
+                    </HoverCardTrigger>
+                    <HoverCardContent class="w-78 mx-2  ">
+                      <div class="flex justify-between space-x-4">
+<!--                        <div-->
+<!--                          class="flex aspect-square size-8 items-center justify-center rounded-lg bg-blue-500 text-white"-->
+<!--                        >-->
+<!--                          <DatabaseZap />-->
+<!--                        </div>-->
+                        <div class="space-y-1">
+                          <h4 class="text-sm font-semibold">Backup info:</h4>
+                          <p class="text-sm">
+                            Backup file of db
+                            <span class="font-bold">{{ backupInfo.dbName }}</span> created using
+                            postgres
+                            <span class="font-bold">{{ backupInfo.dbVersion }}</span> and pg_dump
+                             <span class="font-bold">{{ backupInfo.pgDumpVersion }}</span>
+                          </p>
+                          <div class="flex items-center pt-2">
+                            <CalendarIcon class="mr-2 h-4 w-4 opacity-70" />
+                            <span class="text-xs text-muted-foreground">
+                              Created at {{ backupInfo.fecha }}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </HoverCardContent>
+                  </HoverCard>
+                </FormLabel>
                 <FormControl v-if="!isFileSelected">
                   <Input id="file_input" type="file" @change="handleChange" @blur="handleBlur" />
                 </FormControl>
