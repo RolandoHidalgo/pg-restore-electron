@@ -34,8 +34,8 @@ const useRestoreOnInitApi = (_currentZodSchema) => {
   })
 
   watchEffect(() => {
-    if (store.currentConexionValues.backupPath && !values.value.backupPath) {
-
+    if (store.isRestoreOpen && store.currentConexionValues.backupPath && !values.value.backupPath) {
+      console.log('la setea')
       setBackupPathValue({ path: store.currentConexionValues.backupPath })
     }
   })

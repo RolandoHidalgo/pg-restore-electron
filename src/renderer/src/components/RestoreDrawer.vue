@@ -82,7 +82,7 @@ const finalSchema = computed(() => {
 
   return schema.passthrough()
 })
-const { handleSubmit, values, resetForm } = useForm({
+const { handleSubmit, values, resetForm,setFieldValue } = useForm({
   validationSchema: computed(() => toTypedSchema(finalSchema.value)),
   keepValuesOnUnmount: true
 })
@@ -115,6 +115,7 @@ watchEffect(() => {
   if (!store.isRestoreOpen) {
     isConsoleOpen.value = false
     resetForm()
+    setFieldValue('backupPath',undefined)
     isRestoring.value = false
     newDb.value = false
   }
