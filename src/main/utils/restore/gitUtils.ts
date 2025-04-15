@@ -44,24 +44,24 @@ const performGitFlow = async (cwd: string): Promise<void> => {
 
 const runCommand = async (cwd: string, exe: string, params: string): Promise<void> => {
   return new Promise((resolve, reject) => {
-    console.log(params)
+
     const paramsSplitted = params.toString().split(' ')
     const bat = spawn(exe, paramsSplitted, { cwd })
     bat.stdout.setEncoding('utf8')
     bat.stdout.on('data', (data: any) => {
-      console.log('data', data.toString())
+
     })
     bat.stderr.setEncoding('utf8')
     bat.stderr.on('data', (data: any) => {
-      console.log('error', data.toString())
+
     })
 
     bat.on('exit', (code: any) => {
-      console.log(`Child exited with code ${code}`)
+
       resolve()
     })
     bat.on('error', (code: any) => {
-      console.log(`error ${code}`)
+
       reject(code)
     })
   })
@@ -71,7 +71,7 @@ const execCommand = async (cwd: string, exe: string, params: string): Promise<st
   return new Promise((resolve, reject) => {
     exec(`${exe} ${params}`, { cwd }, (error, stdout, stderr) => {
       if (error) {
-        console.log(`error ${error}`)
+
         reject(`Error al ejecutar el comando: ${error.message}`)
         return
       }

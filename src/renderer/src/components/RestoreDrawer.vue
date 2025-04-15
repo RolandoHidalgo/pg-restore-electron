@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button } from '@renderer/components/ui/button'
-import { computed, ref, watchEffect } from 'vue'
+import { computed, ref, toValue, watchEffect } from 'vue'
 import { z } from 'zod'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
@@ -31,13 +31,16 @@ import { Switch } from '@renderer/components/ui/switch'
 import DatasourceSelect from '@renderer/components/DatasourceSelect.vue'
 import DbSelect from '@renderer/components/DbSelect.vue'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@renderer/components/ui/hover-card'
-import { CalendarIcon, Info, DatabaseZap } from 'lucide-vue-next'
+import { CalendarIcon, Info } from 'lucide-vue-next'
 import useBackupInfo from '@renderer/composables/useBackupInfo'
+import useRestoreOnInitApi from '@renderer/composables/useRestoreOnInitApi'
+import useRestoreCloneApi from '@renderer/composables/useRestoreCloneApi'
 
 const store = useAppStore()
 const isConsoleOpen = ref(false)
 const newDb = ref(false)
 const isRestoring = ref(false)
+
 const newDbSchema = z.object({
   encoding: z.string({
     required_error: 'Requerido.'
@@ -67,35 +70,36 @@ const coneccionSchema = z.object({
     .min(1, { message: 'no vacio' })
 })
 
-const conDsSchema = z.object({
-  dsName: z.string({
-    required_error: 'Requerido.'
-  })
-})
 
-const currentSchema = computed(() => {
-  let schema = coneccionSchema
-  if (store.currentConexionValues.backupPath) {
-    schema = schema.merge(conDsSchema)
-  }
+
+const currentSchema = ref(coneccionSchema);
+
+const finalSchema = computed(() => {
+  let schema = toValue(currentSchema)
   if (newDb.value) {
     schema = schema.merge(newDbSchema)
   }
-  if (store.currentConexionValues.isClone) {
-    return schema.omit({ backupPath: true }).passthrough()
-  }
+
   return schema.passthrough()
 })
-const { handleSubmit, values, resetForm, setFieldValue } = useForm({
-  validationSchema: computed(() => toTypedSchema(currentSchema.value)),
+const { handleSubmit, values, resetForm } = useForm({
+  validationSchema: computed(() => toTypedSchema(finalSchema.value)),
   keepValuesOnUnmount: true
+})
+const {isRestoreClone} = useRestoreCloneApi(currentSchema,newDb);
+const backupInfo = useBackupInfo()
+const {isRestoreOnInit} = useRestoreOnInitApi(currentSchema)
+
+
+const isFileSelected = computed(() => {
+  return values.backupPath && values.backupPath.path
 })
 const onSubmit = handleSubmit((values) => {
   if (!isConsoleOpen.value) {
     isRestoring.value = true
     const fileInputElement = document.getElementById('file_input')
-    console.log(values)
-    if (store.currentConexionValues.isClone) {
+
+    if (isRestoreClone.value) {
       store.cloneDb(values)
     } else {
       store.restoreDb(values, newDb.value, fileInputElement?.files?.[0])
@@ -107,18 +111,11 @@ const onSubmit = handleSubmit((values) => {
   }
 })
 
-const isFileSelected = computed(() => {
-  return values.backupPath && values.backupPath.path
-})
-const backupInfo = useBackupInfo()
 watchEffect(() => {
   if (!store.isRestoreOpen) {
     isConsoleOpen.value = false
-    store.currentConexionValues.backupPath = null
     resetForm()
-    setFieldValue('backupPath', undefined)
     isRestoring.value = false
-    store.currentConexionValues.isClone = false
     newDb.value = false
   }
 })
@@ -126,15 +123,7 @@ const currentDsName = computed(() => {
   const ccv = store.currentConexionValues.dsName
   return ccv !== '' ? ccv : values.dsName
 })
-watchEffect(() => {
-  if (store.currentConexionValues.backupPath && !values.backupPath) {
-    console.log(store.currentConexionValues.backupPath, 'dentro')
-    setFieldValue('backupPath', { path: store.currentConexionValues.backupPath })
-  }
-  if (store.currentConexionValues.isClone) {
-    newDb.value = true
-  }
-})
+
 </script>
 
 <template>
@@ -158,13 +147,13 @@ watchEffect(() => {
                   <Switch
                     id="new-db"
                     v-model:checked="newDb"
-                    :disabled="store.currentConexionValues.isClone"
+                    :disabled="isRestoreClone"
                   />
                 </FormControl>
               </FormItem>
             </FormField>
           </div>
-          <div v-if="store.currentConexionValues.backupPath" class="col-span-2">
+          <div v-if="isRestoreOnInit" class="col-span-2">
             <DatasourceSelect />
           </div>
           <div class="col-span-2" v-if="!newDb">
@@ -185,7 +174,7 @@ watchEffect(() => {
 
           <NewDbForm v-if="newDb" />
 
-          <div class="col-span-2" v-if="!store.currentConexionValues.isClone">
+          <div class="col-span-2" v-if="!isRestoreClone">
             <FormField v-slot="{ handleChange, handleBlur }" name="backupPath">
               <FormItem>
                 <FormLabel
@@ -218,6 +207,7 @@ watchEffect(() => {
                           </div>
                         </div>
                       </div>
+
                     </HoverCardContent>
                   </HoverCard>
                 </FormLabel>

@@ -69,9 +69,7 @@ export const useAppStore = defineStore('appStore', () => {
         ? window.electron.showFilePath(file)
         : currentConexionValues.value?.backupPath
     }
-    console.log(formValues, 'values')
-    console.log(options, 'op')
-    console.log(file, 'aa')
+
     if (currentConexionValues.value.isClone) {
       window.electron.cloneDb(formValues, formValues)
     } else if (newDb) {
@@ -124,7 +122,7 @@ export const useAppStore = defineStore('appStore', () => {
 
   const handleBakupOnStart = async () => {
     await window.electron.getFileArg().then((data) => {
-      console.log(data, 'la data')
+
       if (data !== null) {
         currentConexionValues.value.dbName = ''
         currentConexionValues.value.dsName = ''

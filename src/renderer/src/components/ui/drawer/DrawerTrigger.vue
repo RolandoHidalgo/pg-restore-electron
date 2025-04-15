@@ -11,9 +11,7 @@ onMounted(() => {
   const injectionKey = Symbol(`DrawerRootContext`)
 
   const context = inject(`DrawerRootContext`)
-  console.log(props, 'trigerrrrrrrrrrrrr')
-  console.log(attrs.value, 'aaaa')
-  console.log(context, 'contexttttttt')
+
 })
 </script>
 

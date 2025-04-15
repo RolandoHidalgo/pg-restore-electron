@@ -109,7 +109,7 @@ app.whenReady().then(() => {
   app.commandLine.appendSwitch('lang', 'es')
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron.pgUI-restore')
-  console.log(app.getVersion(), 'la versionnnn')
+
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
   // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
@@ -131,13 +131,13 @@ app.whenReady().then(() => {
   })
 
   ipcMain.on('create-db', (event, dbOptions, createDbOptions) => {
-    console.log('create-db', dbOptions)
+
     createDb(dbOptions, createDbOptions, event)
 
   })
 
   ipcMain.on('clone-db', (event, dbOptions, createDbOptions) => {
-    console.log('clone-db', dbOptions)
+
     cloneDb(dbOptions, createDbOptions, event)
 
   })
@@ -175,7 +175,7 @@ app.whenReady().then(() => {
     const backupFile = process.argv.filter(e => {
       return e.toString().includes('.backup')
     })
-    console.log(backupFile[0], 'file')
+
     return backupFile.length > 0 ? backupFile[0] : null
 
 
@@ -188,7 +188,7 @@ app.whenReady().then(() => {
 
   })
   ipcMain.handle('get-dbs', async (event, name: string) => {
-    console.log('main con name', name)
+
     return getDatabaseByDatasource(name)
 
 
@@ -221,7 +221,7 @@ app.whenReady().then(() => {
   //   binary:'C:\\Program Files\\PostgreSQL\\13\\bin',
   //   name:'local'
   // })
-  // console.log('asdasdldldldldle3333',getDatasources())
+
   app.on('activate', function() {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.

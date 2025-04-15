@@ -60,7 +60,7 @@ const onSubmit = handleSubmit((values) => {
   // isConsoleOpen.value = true
   //
   // store.restoreDb(values, newDb.value, fileInputElement.files[0])
-  console.log(values)
+
 })
 </script>
 

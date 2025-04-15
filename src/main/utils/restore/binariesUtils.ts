@@ -23,7 +23,7 @@ const getVersions = (basePath) => {
 }
 
 const findBinarys = () => {
-  console.log('el process desde el binary', process.argv)
+
   return basePathsArch.map((e) => (fs.existsSync(e) ? getVersions(e) : [])).flat()
 }
 export type BackupInfo = {
@@ -56,7 +56,7 @@ const parseBackup = async (dsName: string, backupPath: string): Promise<BackupIn
       info.dbName = getValueAfterDoublePoints(line)
     }
   })
-  console.log('infoLines', info)
+
   return info
 }
 const getValueAfterDoublePoints = (line: string, splitPattern = ':') => {

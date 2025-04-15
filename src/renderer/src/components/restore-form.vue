@@ -7,7 +7,7 @@ import AddDbDialog from "./AddDbDialog.vue";
 const file = ref([]);
 onBeforeMount(() => {
   window.electron.getFileArg().then(data => {
-    console.log(data, "la data");
+
     if (data !== null) {
       const fileTemp = new File([], data, {
         type: data.type

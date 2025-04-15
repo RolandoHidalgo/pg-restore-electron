@@ -10,12 +10,12 @@ export const useDataSourceStore = defineStore('dataSourceStore', () => {
   function loadDataSources() {
     dataSourceLoading.value = true
     window.electron.getDatasource().then((ds:DataSource[]) => {
-      console.log(dataSources.value, 'ds')
-      console.log(ds, 'ds')
+
+
       dataSources.value = ds.map((e: DataSource) => {
         return { ...e, text: `${e.name}-${e.host}` }
       })
-      console.log(dataSources.value, 'ds')
+
     })
 
 

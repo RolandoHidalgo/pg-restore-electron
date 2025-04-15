@@ -33,9 +33,7 @@ import {computed,  watchEffect} from 'vue'
 const props = defineProps<{ dsName: string,search:string }>()
 const { dbs } = useDbs(() => props.dsName)
 const {openBackup,openRestore,openClone}=useApp()
-watchEffect(()=>{
-  console.log(props.search)
-})
+
 const currentDbs = computed(()=>{
   if(props.search!==''){
     return dbs.value.filter(db=>db.startsWith(props.search))

@@ -85,7 +85,7 @@ const onSubmit = handleSubmit(async (values) => {
 })
 watchEffect(() => {
   if (!store.isDataSourceFormOpen) {
-    console.log('limpiar')
+
     store.currentDsForm = null
     resetForm()
   }
@@ -96,13 +96,13 @@ watchEffect(() => {
   // }
 })
 const handleReset = () => {
-  console.log('limpiar')
+
   resetForm({ values: { ...initVals } })
 }
 store.$onAction(({ name, after }) => {
   after(() => {
     if (name === 'openDataSourceForm') {
-      console.log('seteando', store.currentDsForm)
+
       setValues({ ...store.currentDsForm })
       //resetForm({ values:  })
       store.currentDsForm = null

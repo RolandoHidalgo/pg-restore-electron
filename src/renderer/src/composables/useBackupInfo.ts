@@ -14,15 +14,15 @@ const useBackupInfo = () => {
     dbName: ''
   })
   const parseBackup = async (backupPath: string | File, dsName = null): Promise<BackupInfo> => {
-    console.log(backupPath,dsName,'got info')
+
     return window.electron.parseBackup(dsName ?? store.currentConexionValues.dsName, backupPath)
   }
   watchEffect(async () => {
     if (values.value.backupPath) {
-      console.log(values.value.backupPath, 'tiene o no path')
+
       if (values.value.backupPath.path) {
         if (values.value.dsName && values.value.dsName !== '') {
-          console.log(values.value.dsName, 'tiene o no ds')
+
           backupInfo.value = await parseBackup(values.value.backupPath.path, values.value.dsName)
         }
       } else {

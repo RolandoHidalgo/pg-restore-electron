@@ -15,11 +15,11 @@ const getUSBDrives = async ():Promise<{name:string,mount:string}> => {
       }
 
       // Mostrar los puntos de montaje de las unidades extraíbles
-      console.log('Puntos de montaje de unidades USB:');
+
       const lines = stdout.trim().split('\n').slice(1); // Ignorar la cabecera
       res(lines.map((line) => {
         const [mount,name] = line.trim().split('2').map(usb=>usb.trim())
-        console.log(name,mount,fs.existsSync(resolve(mount)));
+
         return {name,mount:resolve(mount)}
       }))
     });

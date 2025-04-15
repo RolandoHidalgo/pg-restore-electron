@@ -9,7 +9,7 @@ export const useBinarieStore = defineStore('binarieStore', () => {
   async function loadBinaries() {
     binariesLoading.value = true
     binaries.value = await window.electron.getBinaries().then((binaries:Binary[]) => {
-      console.log(binaries, 'binaries')
+
       return binaries.map((e:Binary) => {
         return { ...e, text: `${e.version} - ${e.arq}` }
       })

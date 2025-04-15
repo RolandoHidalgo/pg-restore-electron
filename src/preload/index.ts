@@ -15,22 +15,22 @@ const api = {
     dbOptions.host = ds?.host
     dbOptions.binary = ds?.binary
     dbOptions.port = ds?.port
-    console.log(dbOptions, 'optionss')
+
     return ipcRenderer.send('restore-db', dbOptions)
   },
   sincronizarUsb: (usbDrive: string) => ipcRenderer.send('sincronizar-usb', usbDrive),
   backupDb: (dbOptions: DbOptions) => {
-    console.log(dbOptions, 'optionss1')
+
     const ds: DataSource | undefined = getDatasources().filter(
       (e) => e.name === dbOptions.dsName
     )[0]
-    console.log(ds, 'el ds')
+
     dbOptions.user = ds?.username
     dbOptions.password = ds?.password
     dbOptions.host = ds?.host
     dbOptions.binary = ds?.binary
     dbOptions.port = ds?.port
-    console.log(dbOptions, 'optionss')
+
     ipcRenderer.send('backup-db', dbOptions)
   },
   addDatasource: async (ds: DataSource) => {
@@ -78,7 +78,7 @@ const api = {
     dbOptions.host = ds?.host
     dbOptions.binary = ds?.binary
     dbOptions.port = ds?.port
-    console.log(dbOptions, 'optionss')
+
     return ipcRenderer.send('create-db', dbOptions, createDbOptions)
   },
   cloneDb: (dbOptions: DbOptions, createDbOptions) => {
@@ -91,7 +91,7 @@ const api = {
     dbOptions.host = ds?.host
     dbOptions.binary = ds?.binary
     dbOptions.port = ds?.port
-    console.log(dbOptions, 'optionss')
+
     return ipcRenderer.send('clone-db', dbOptions, createDbOptions)
   },
   restoreFinish: () => ipcRenderer.send('restore-finish'),
@@ -104,7 +104,7 @@ const api = {
   getDrives: () => ipcRenderer.invoke('get-drives'),
   getDatasource: (): Promise<DataSource[]> => ipcRenderer.invoke('get-datasource'),
   getDbs: async (name: string) => {
-    console.log('allamar con name', name)
+
     return ipcRenderer.invoke('get-dbs', name)
   },
   getSchemmas: async (dsName: string, dbName: string) => {

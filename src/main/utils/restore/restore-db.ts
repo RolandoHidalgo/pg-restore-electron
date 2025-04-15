@@ -42,27 +42,27 @@ const restoreDb = (dbOptions: DbOptions, event: IpcMainEvent) => {
   paramsSplitted.push(path.normalize(backupPath));
 
 
-  console.log(binary, paramsSplitted.join(" "));
+
   const exe = path.join(binary, 'pg_restore.exe');
   const bat = spawn(exe, paramsSplitted, {env: {...process.env, PGPASSWORD: password}});
   getBrowserWindow(event)?.setProgressBar(2);
   bat.stdout.setEncoding("utf8");
   bat.stdout.on("data", (data: any) => {
-    console.log("data", data.toString());
+
     event.sender.send("restore-logs", data.toString());
   });
   bat.stderr.setEncoding("utf8");
   bat.stderr.on("data", (data: any) => {
-    console.log("error", data.toString());
+
     event.sender.send("restore-logs", data.toString());
   });
 
   bat.on("exit", (code: any) => {
-    console.log(`Child exited with code ${code}`);
+
     event.sender.send("restore-logs", `finish-OK`);
   });
   bat.on("error", (code: any) => {
-    console.log(`error ${code}`);
+
     event.sender.send("restore-logs", `error ${code}`);
   });
 };
@@ -84,7 +84,7 @@ function getFormattedDateTime() {
 function listDatabases(user: string, password: string, host: string, port: number, binary: string): Promise<string[]> {
   // Replace 'your_username' and 'your_password' with your credentials
 
-  console.log('listar con allamar con name', password);
+
   return new Promise((resolve, reject) => {
     const command = `"${binary}\\psql.exe" -U ${user} --host ${host} --port ${port} -c "\\l"`;
 
@@ -103,7 +103,7 @@ function listDatabases(user: string, password: string, host: string, port: numbe
       }
 
       // Process and print the output
-      console.log('Available Databases:');
+
       const lines = stdout.split('\n')
         .filter(line => line.includes('|'))
         .map(line => line.split('|')[0].trim())
@@ -142,7 +142,7 @@ const obtenerEsquemas = (ds: DataSource, dbName: string): Promise<string[]> => {
   });
 };
 const getDatabaseByDatasource = async (dataSourceName: string): Promise<string[]> => {
-  console.log('restore con con name', dataSourceName)
+
   const ds: DataSource = getDatasource(dataSourceName);
   return listDatabases(ds.username, ds.password, ds.host, ds.port, ds.binary);
 }
@@ -169,15 +169,13 @@ const backupDb = (dbOptions: DbOptions, event: IpcMainEvent):Promise<string> => 
     //const params = `-F c --host ${host} --port ${port} --username ${user} --role postgres --dbname ${dbName}`;
     let params = `--file ${path.normalize(backupPath)} --host ${host} --port ${port} --username ${user} --format=c --verbose${schammaParams} ${dbName}`;
 
-    console.log(params);
-    console.log(backupFullName);
-    console.log(backupPath);
+
     const paramsSplitted = params.toString().split(" ");
     //paramsSplitted.push(path.normalize(backupPath));
 
 
     const exe = path.join(binary, 'pg_dump.exe');
-    console.log(exe, paramsSplitted);
+
     const bat = spawn(exe, paramsSplitted, {env: {...process.env, PGPASSWORD: password}});
     getBrowserWindow(event)?.setProgressBar(2);
     bat.stdout.setEncoding("utf8");
@@ -233,14 +231,13 @@ const createDb = (dbOptions: DbOptions, createDbOptions: CreateDebOptions, event
   const paramsSplitted = params.toString().split(" ");
 
   const exe = path.join(binary, 'createdb.exe');
-  console.log(exe, paramsSplitted.join(" "));
-  console.log(createDbOptions);
+
 
   const bat = spawn(exe, paramsSplitted, {env: {...process.env, PGPASSWORD: password}});
   getBrowserWindow(event)?.setProgressBar(2);
 
   bat.stdout.setEncoding("utf8");
-  console.log('va a ejecutar')
+
   bat.stdout.on("data", (data: any) => {
     console.log("data", data.toString());
     event.sender.send("restore-logs", data.toString());
@@ -266,9 +263,9 @@ const createDb = (dbOptions: DbOptions, createDbOptions: CreateDebOptions, event
 
 const cloneDb = async (dbOptions: DbOptions, createDbOptions: CreateDebOptions, event: IpcMainEvent)=>{
   dbOptions.backupPath =  await backupDb(dbOptions,event)
-  console.log("backup backup database", dbOptions);
+
   dbOptions.dbName = dbOptions.targetCloneDbName
-  console.log("backup backup database", dbOptions);
+
   createDb(dbOptions,createDbOptions,event);
 }
 

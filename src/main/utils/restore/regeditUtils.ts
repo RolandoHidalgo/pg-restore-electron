@@ -5,10 +5,10 @@ import fs from "node:fs";
 
 import path from "node:path";
 
-console.log("sadasdasdasd");
+
 
 const writeChekFile = () => {
-  console.log("sadasdasdasd");
+
   try {
     fs.writeFileSync(getCheckFilePaht(), "true");
     // file written successfully
@@ -22,7 +22,7 @@ const isFisrtRun = () => {
 
 
   try {
-    console.log("is first??");
+
     return !fs.existsSync(getCheckFilePaht());
     // file written successfully
   } catch (err) {
@@ -32,21 +32,21 @@ const isFisrtRun = () => {
 };
 
 const getCheckFilePaht = () => {
-  console.log("check");
+
   const val = path.join(path.dirname(process.argv[0]), "apprun.info");
-  console.log(val);
+
   return val;
 };
 
 const squirrelStartupEvent = () => {
-  console.log("squirelllllllll");
+
   if (process.platform !== "win32" || process.env.WEBPACK_DEV_SERVER_URL) {
-    console.log("no instalar");
+
     return false;
   }
 
   if (isFisrtRun()) {
-    console.log("a instalarrrrrrrr");
+
     //... instantiate your ProgIds
     const progId = new ProgId({
       description: "Restaurar PostgreSQl .backup files",
@@ -64,11 +64,11 @@ const squirrelStartupEvent = () => {
     });
 
     progId.install().then((e) => {
-      console.log("el progId installed", e);
+
     });
 
     Regedit.installAll().then((e) => {
-      console.log("all process installed", e);
+
     });
     writeChekFile();
   }
@@ -77,7 +77,7 @@ const squirrelStartupEvent = () => {
 };
 
 const handleSquirell = () => {
-  console.log("handleeeeee");
+
   const handle = squirrelStartupEvent();
   if (handle) {
     //app.quit();

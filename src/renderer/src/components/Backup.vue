@@ -66,7 +66,7 @@ const {handleSubmit, values} = useForm({
 })
 
 const onSubmit = handleSubmit((values) => {
-  console.log(values, 'asdfsdfsf')
+
   isOpenDialog.value = true
   const formValues = {...values, backupPath: ''}
   window.electron.backupDb(formValues)

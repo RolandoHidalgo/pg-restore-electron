@@ -80,7 +80,7 @@ const initVals = {
 const fileRef = ref()
 onBeforeMount(() => {
   window.electron.getFileArg().then((data) => {
-    console.log(data, 'la data')
+
     if (data !== null) {
       setFieldValue('backupPath', { path: data })
     }
