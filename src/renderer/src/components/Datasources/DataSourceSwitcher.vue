@@ -5,7 +5,6 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@renderer/components/ui/dropdown-menu'
 import {
@@ -13,12 +12,19 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '@renderer/components/ui/sidebar'
-import { ChevronsUpDown,  DatabaseZap,  Plus, Unplug,Star,Pencil } from 'lucide-vue-next'
+import { ChevronsUpDown,  DatabaseZap,  Plus, Unplug,Star,Pencil,Trash } from 'lucide-vue-next'
 import { computed, ref, watchEffect} from 'vue'
 import {useDataSource} from "@renderer/composables";
 
 import { useAppStore } from '@renderer/stores/appStore'
-
+import { Button } from '@renderer/components/ui/button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@renderer/components/ui/tooltip'
+import { DataSource } from '../../../../main/utils/restore/dataSourceUtils'
 const {datasources,setDefaultDatasource} = useDataSource()
 
 
@@ -45,13 +51,17 @@ const handleActiveDs = (ds) => {
   activeDs.value = ds
   emit('change', ds.name)
 }
-
+function test(ds:DataSource){
+  isOpen.value = false
+  store.openDeleteDsForm(ds);
+}
+const isOpen = ref(false)
 const store = useAppStore()
 </script>
 <template>
   <SidebarMenu>
     <SidebarMenuItem>
-      <DropdownMenu>
+      <DropdownMenu v-model:open="isOpen">
         <DropdownMenuTrigger as-child>
           <SidebarMenuButton
             size="lg"
@@ -84,12 +94,33 @@ const store = useAppStore()
             :key="ds.name"
             class="gap-2 p-2"
             @click="handleActiveDs(ds)"
+
           >
+
             <div class="flex size-6 items-center justify-center rounded-sm border">
               <component :is="Unplug" class="size-4 shrink-0"/>
             </div>
             {{ ds.name }}@{{ ds.host }}
-            <DropdownMenuShortcut>⌘{{ index + 1 }}</DropdownMenuShortcut>
+            <Button
+              variant="outline"
+              class="h-6 w-4.5 rounded-sm justify-self-end ml-auto"
+              @click.stop="test(ds)"
+              v-if="activeDs.name !== ds.name">
+              <Trash class="size-4 text-destructive" />
+            </Button>
+<!--            <TooltipProvider disable-closing-trigger>-->
+<!--              <Tooltip default-open :open="true">-->
+<!--                <TooltipTrigger as-child>-->
+<!--                  <Button variant="outline"  class="h-6 w-4.5 rounded-sm justify-self-end ml-auto" @click.stop="test">-->
+<!--                    <Trash class="size-4 text-destructive" />-->
+<!--                  </Button>-->
+<!--                </TooltipTrigger>-->
+<!--                <TooltipContent side="left" class="bg-destructive">-->
+<!--                  <p>Delete datasource</p>-->
+<!--                </TooltipContent>-->
+<!--              </Tooltip>-->
+<!--            </TooltipProvider>-->
+
           </DropdownMenuItem>
           <DropdownMenuSeparator/>
           <DropdownMenuLabel class="text-xs text-muted-foreground">

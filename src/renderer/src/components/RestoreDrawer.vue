@@ -115,7 +115,7 @@ watchEffect(() => {
   if (!store.isRestoreOpen) {
     isConsoleOpen.value = false
     resetForm()
-    setFieldValue('backupPath',undefined)
+    //setFieldValue('backupPath',undefined)
     isRestoring.value = false
     newDb.value = false
   }
@@ -124,6 +124,11 @@ const currentDsName = computed(() => {
   const ccv = store.currentConexionValues.dsName
   return ccv !== '' ? ccv : values.dsName
 })
+
+function test(){
+  resetForm()
+  //setFieldValue('backupPath',undefined)
+}
 
 </script>
 

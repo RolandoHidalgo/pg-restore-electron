@@ -21,6 +21,10 @@ export const useDataSourceStore = defineStore('dataSourceStore', () => {
 
     dataSourceLoading.value = false
   }
+  async function deleteDataSource(dsName: string) {
+    await window.electron.deleteDatasource(dsName);
+    loadDataSources()
+  }
 
-  return { loadDataSources, dataSources, dataSourceLoading }
+  return { loadDataSources, dataSources, dataSourceLoading,deleteDataSource }
 })

@@ -68,7 +68,7 @@ function handleBackup() {
               <span class="truncate text-xs">{{ store.currentConexionValues.dsName }}</span>
             </div>
           </div>
-          <div class="flex  flex items-center justify-center">
+          <div class=" flex items-center justify-center">
             <DatabaseBackup class="h-6 w-6 text-primary mr-2" />
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-semibold">DB</span>

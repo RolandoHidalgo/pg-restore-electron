@@ -103,6 +103,7 @@ const api = {
   getBinaries: () => ipcRenderer.invoke('get-binaries'),
   getDrives: () => ipcRenderer.invoke('get-drives'),
   getDatasource: (): Promise<DataSource[]> => ipcRenderer.invoke('get-datasource'),
+  deleteDatasource: (dsName:string): Promise<void> => ipcRenderer.invoke('delete-datasource',dsName),
   getDbs: async (name: string) => {
 
     return ipcRenderer.invoke('get-dbs', name)

@@ -50,4 +50,13 @@ const setDafaultDatasource = (dsName: string): void => {
   write(config, rc)
 }
 
-export { getDatasources, addDatasources, getDatasource, setDafaultDatasource }
+const deleteDatasource = (dsName: string): void => {
+  const config = read(rc)
+  const index = config.datasources.findIndex((e) => e.name === dsName)
+  if (index >= 0) {
+    config.datasources.splice(index, 1)
+  }
+  write(config, rc)
+}
+
+export { getDatasources, addDatasources, getDatasource, setDafaultDatasource,deleteDatasource }

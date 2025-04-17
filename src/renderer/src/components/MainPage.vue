@@ -46,7 +46,7 @@ const search = ref('')
   <SearchForm @input="search=$event"></SearchForm>
   <SidebarContent>
     <SidebarGroup>
-      <SidebarGroupLabel>Datasources</SidebarGroupLabel>
+      <SidebarGroupLabel>Databases</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
           <DBList :ds-name="currentDs" :search="search"></DBList>

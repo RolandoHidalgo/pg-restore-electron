@@ -16,6 +16,7 @@ export const useAppStore = defineStore('appStore', () => {
   const isBackupOpen = ref(false)
   const isAboutOpen = ref(false)
   const isDataSourceFormOpen = ref(false)
+  const isDataSourceDeleteFormOpen = ref(false)
   const isSyncOpen = ref(false)
   const currentUsbDrive = ref('')
   const currentDsForm = ref<DataSource|null>(null)
@@ -33,6 +34,11 @@ export const useAppStore = defineStore('appStore', () => {
     currentConexionValues.value.dsName = dsName
     currentConexionValues.value.schema = schema
     isBackupOpen.value = true
+  }
+
+  function openDeleteDsForm(ds:DataSource) {
+    currentDsForm.value = ds
+    isDataSourceDeleteFormOpen.value = true
   }
 
   function openRestore(dsName: string, dbName: string = ''): void {
@@ -121,16 +127,15 @@ export const useAppStore = defineStore('appStore', () => {
   }
 
   const handleBakupOnStart = async () => {
-    await window.electron.getFileArg().then((data) => {
-
-      if (data !== null) {
-        currentConexionValues.value.dbName = ''
-        currentConexionValues.value.dsName = ''
-        currentConexionValues.value.backupPath = data
-        isRestoreOpen.value = true
-        //setFieldValue('backupPath', { path: data })
-      }
-    })
+    const data = await window.electron.getFileArg();
+    if (data !== null) {
+      currentConexionValues.value.dbName = ''
+      currentConexionValues.value.dsName = ''
+      currentConexionValues.value.backupPath = data
+      isRestoreOpen.value = true
+      //setFieldValue('backupPath', { path: data })
+    }
+    return data
   }
   return {
     closeConsole,
@@ -153,6 +158,8 @@ export const useAppStore = defineStore('appStore', () => {
     handleBakupOnStart,
     openClone,
     cloneDb,
-    currentDsForm
+    currentDsForm,
+    openDeleteDsForm,
+    isDataSourceDeleteFormOpen,
   }
 })

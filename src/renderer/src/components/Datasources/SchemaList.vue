@@ -20,7 +20,7 @@ const {openBackup}=useApp()
 <template>
   <SidebarMenuItem v-for="schema in schemas" :key="schema">
     <SidebarMenuButton>
-      <Network />
+      <Network class="text-blue-500"/>
       {{ schema }}
     </SidebarMenuButton>
     <DropdownMenu>

@@ -20,7 +20,13 @@ import { handleSquirell } from './utils/restore/regeditUtils'
 
 import log from 'electron-log'
 import { autoUpdater } from 'electron-updater'
-import { addDatasources, DataSource, getDatasources, setDafaultDatasource } from './utils/restore/dataSourceUtils'
+import {
+  addDatasources,
+  DataSource,
+  deleteDatasource,
+  getDatasources,
+  setDafaultDatasource
+} from './utils/restore/dataSourceUtils'
 import { getUSBDrives } from './utils/restore/drivesUtils'
 
 try {
@@ -211,6 +217,10 @@ app.whenReady().then(() => {
     return getDatasources()
 
 
+  })
+  ipcMain.handle('delete-datasource', (event,dsName:string): DataSource[] => {
+
+     deleteDatasource(dsName);
   })
   createWindow()
   // addDatasources({
