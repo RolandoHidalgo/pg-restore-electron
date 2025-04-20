@@ -8,9 +8,11 @@ const useDataSource = () => {
     dataSourceStore.loadDataSources()
   })
   function setDefaultDatasource(dsName:string){
+    dataSourceStore.defaultDs = dsName;
     window.electron.setDefaultDatasource(dsName)
   }
   const datasources = computed(() => dataSourceStore.dataSources);
-  return { datasources ,setDefaultDatasource}
+  const defaultDs = computed(() => dataSourceStore.defaultDs);
+  return { datasources ,setDefaultDatasource,defaultDs }
 }
 export default useDataSource

@@ -56,8 +56,8 @@ function handleBackup() {
     <SheetTrigger></SheetTrigger>
     <SheetContent side="bottom" class="rounded-t-lg">
       <SheetHeader>
-        <SheetTitle>Crear profile</SheetTitle>
-        <SheetDescription> Se creará un backup con estos parametros.</SheetDescription>
+        <SheetTitle>Crear backup</SheetTitle>
+        <SheetDescription> Se creará un backup con estos parámetros.</SheetDescription>
       </SheetHeader>
       <form class="grid gap-4 px-4">
         <div class="grid grid-cols-2 gap-2 overflow-y-auto pb-0" v-if="!isConsoleOpen">
@@ -89,7 +89,7 @@ function handleBackup() {
         <RestoreConsole v-else @done="isBackingUp=false"/>
       </form>
       <SheetFooter>
-        <Button @click.prevent="handleBackup" :disabled="isBackingUp"> Crear backup</Button>
+        <Button @click.prevent="handleBackup" :disabled="isBackingUp || isConsoleOpen"> Crear backup</Button>
       </SheetFooter>
     </SheetContent>
   </Sheet>

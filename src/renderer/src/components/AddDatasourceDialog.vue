@@ -29,12 +29,13 @@ import {
 } from '@renderer/components/ui/sheet'
 import { useAppStore } from '@renderer/stores/appStore'
 import { useDataSourceStore } from '@renderer/stores/datasourceStore'
+import { useConexionStore } from '@renderer/stores/conexionStore'
 
 const store = useAppStore()
 const dsStore = useDataSourceStore()
 const messages = ref('')
 const updating = ref(false)
-
+const isEdit = ref(false);
 const coneccionSchema = z.object({
   binary: z.string({
     required_error: 'Requerido.'
@@ -79,7 +80,10 @@ const { handleSubmit, resetForm, values, setValues } = useForm({
 
 const onSubmit = handleSubmit(async (values) => {
   await window.electron.addDatasource(values)
-  dsStore.loadDataSources()
+  await dsStore.loadDataSources()
+  if(isEdit.value){
+    useConexionStore().loadDbs()
+  }
   store.isDataSourceFormOpen = false
   resetForm()
 })
@@ -104,6 +108,7 @@ store.$onAction(({ name, after }) => {
     if (name === 'openDataSourceForm') {
 
       setValues({ ...store.currentDsForm })
+      isEdit.value = store.currentDsForm !== null
       //resetForm({ values:  })
       store.currentDsForm = null
     }
@@ -116,7 +121,7 @@ store.$onAction(({ name, after }) => {
     <SheetTrigger></SheetTrigger>
     <SheetContent side="bottom" class="rounded-t-lg">
       <SheetHeader>
-        <SheetTitle>Adicionar datasource</SheetTitle>
+        <SheetTitle>{{`${isEdit?'Editar':'Adicionar'}`}} datasource</SheetTitle>
         <SheetDescription> Parámetros de conexión.</SheetDescription>
       </SheetHeader>
       <form class="w-full flex flex-col" @submit="onSubmit">
@@ -125,11 +130,11 @@ store.$onAction(({ name, after }) => {
             <BinarySelect />
           </div>
           <div>
-            <FormField v-slot="{ componentField }" name="name">
+            <FormField v-slot="{ componentField }" name="name" >
               <FormItem>
                 <FormLabel>Nombre</FormLabel>
                 <FormControl>
-                  <Input type="text" v-bind="componentField" />
+                  <Input type="text" v-bind="componentField" :disabled="isEdit"/>
                 </FormControl>
                 <FormMessage />
               </FormItem>

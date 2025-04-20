@@ -25,7 +25,7 @@ import {
   TooltipTrigger,
 } from '@renderer/components/ui/tooltip'
 import { DataSource } from '../../../../main/utils/restore/dataSourceUtils'
-const {datasources,setDefaultDatasource} = useDataSource()
+const {datasources,setDefaultDatasource,defaultDs} = useDataSource()
 
 
 const activeDs = ref(datasources.value[0] ?? {name: '', binary: ''})
@@ -39,7 +39,7 @@ watchEffect(() => {
   if (activeDs.value.name === '' && datasources.value[0]) {
 
 
-    activeDs.value = datasources.value.filter(d => d.isDefault)[0] ?? datasources.value[0]
+    activeDs.value = datasources.value.filter(d => d.name===defaultDs.value)[0] ?? datasources.value[0]
     emit('change',activeDs.value.name)
 
 
@@ -101,32 +101,36 @@ const store = useAppStore()
               <component :is="Unplug" class="size-4 shrink-0"/>
             </div>
             {{ ds.name }}@{{ ds.host }}
-            <Button
-              variant="outline"
-              class="h-6 w-4.5 rounded-sm justify-self-end ml-auto"
-              @click.stop="test(ds)"
-              v-if="activeDs.name !== ds.name">
-              <Trash class="size-4 text-destructive" />
-            </Button>
-<!--            <TooltipProvider disable-closing-trigger>-->
-<!--              <Tooltip default-open :open="true">-->
-<!--                <TooltipTrigger as-child>-->
-<!--                  <Button variant="outline"  class="h-6 w-4.5 rounded-sm justify-self-end ml-auto" @click.stop="test">-->
-<!--                    <Trash class="size-4 text-destructive" />-->
-<!--                  </Button>-->
-<!--                </TooltipTrigger>-->
-<!--                <TooltipContent side="left" class="bg-destructive">-->
-<!--                  <p>Delete datasource</p>-->
-<!--                </TooltipContent>-->
-<!--              </Tooltip>-->
-<!--            </TooltipProvider>-->
+<!--            <Button-->
+<!--              variant="outline"-->
+<!--              class="h-6 w-4.5 rounded-sm justify-self-end ml-auto"-->
+<!--              @click.stop="test(ds)"-->
+<!--              v-if="activeDs.name !== ds.name">-->
+<!--              <Trash class="size-4 text-destructive" />-->
+<!--            </Button>-->
+            <TooltipProvider disable-closing-trigger>
+              <Tooltip>
+                <TooltipTrigger as-child>
+                  <Button
+                    variant="outline"
+                    class="h-6 w-4.5 rounded-sm justify-self-end ml-auto"
+                    @click.stop="test(ds)"
+                    v-if="activeDs.name !== ds.name && defaultDs!==ds.name">
+                    <Trash class="size-4 text-destructive" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent  variant="destructive">
+                  <p>Delete datasource</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
           </DropdownMenuItem>
           <DropdownMenuSeparator/>
           <DropdownMenuLabel class="text-xs text-muted-foreground">
             Opciones del datasource
           </DropdownMenuLabel>
-          <DropdownMenuItem class="gap-2 p-2" @click="store.openRestore(activeDs.name)">
+          <DropdownMenuItem class="gap-2 p-2" @click="store.openRestore(activeDs.name)" v-if="activeDs.name !==''">
             <div class="flex size-6 items-center justify-center rounded-md border bg-background">
               <DatabaseZap class="size-4"/>
             </div>
@@ -134,7 +138,7 @@ const store = useAppStore()
               Restore
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem class="gap-2 p-2" @click="setDefaultDatasource(activeDs.name)" >
+          <DropdownMenuItem class="gap-2 p-2" @click="setDefaultDatasource(activeDs.name)" v-if="activeDs.name !=='' && activeDs.name !== defaultDs">
             <div class="flex size-6 items-center justify-center rounded-md border bg-background">
               <Star  class="size-4"/>
             </div>
@@ -151,7 +155,7 @@ const store = useAppStore()
               Add datasource
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem class="gap-2 p-2" @click="store.openDataSourceForm(activeDs)">
+          <DropdownMenuItem class="gap-2 p-2" @click="store.openDataSourceForm(activeDs)" v-if="activeDs.name !==''">
             <div class="flex size-6 items-center justify-center rounded-md border bg-background">
               <Pencil  class="size-4"/>
             </div>

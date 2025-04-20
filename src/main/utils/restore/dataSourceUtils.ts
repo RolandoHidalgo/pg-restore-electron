@@ -9,21 +9,21 @@ export type DataSource = {
   port: number
   binary: string
   password: string
-  isDefault: boolean
 }
+export type DatasourceInfo = { datasources: DataSource[], defaultDs: string }
 
 const rc = {
   name: 'pgRestoreConf',
   dir: path.join(os.homedir(), 'pgRestore')
 }
 
-const getDatasources = (): DataSource[] => {
+const getDatasourcesInfo = ():DatasourceInfo => {
   const config = read(rc)
-  return config.datasources ?? []
+  return { datasources: config.datasources ?? [], defaultDs: config.defaultDs }
 }
 
 const getDatasource = (name: string) => {
-  return getDatasources().filter((e) => e.name === name)[0]
+  return getDatasourcesInfo().datasources.filter((e) => e.name === name)[0]
 }
 
 const addDatasources = (ds: DataSource): void => {
@@ -36,17 +36,18 @@ const addDatasources = (ds: DataSource): void => {
   if (index >= 0) {
     config.datasources[index] = ds
   } else {
-    ds.isDefault = false
+
     config.datasources.push(ds)
+  }
+  if(!config.defaultDs){
+    config.defaultDs = ds.name
   }
   write(config, rc)
 }
 
 const setDafaultDatasource = (dsName: string): void => {
   const config = read(rc)
-  config.datasources.forEach((e) => {
-    e.isDefault = e.name === dsName
-  })
+  config.defaultDs = dsName
   write(config, rc)
 }
 
@@ -59,4 +60,4 @@ const deleteDatasource = (dsName: string): void => {
   write(config, rc)
 }
 
-export { getDatasources, addDatasources, getDatasource, setDafaultDatasource,deleteDatasource }
+export { getDatasourcesInfo, addDatasources, getDatasource, setDafaultDatasource, deleteDatasource }

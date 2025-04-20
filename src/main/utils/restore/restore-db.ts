@@ -72,7 +72,7 @@ const restoreDb = (dbOptions: DbOptions, event: IpcMainEvent) => {
   })
 
   bat.on('exit', (code: any) => {
-    event.sender.send('restore-logs', `finish-OK`)
+    event.sender.send('restore-logs', `finish-restore-ok`)
   })
   bat.on('error', (code: any) => {
     event.sender.send('restore-logs', `error ${code}`)
@@ -105,7 +105,7 @@ function listDatabases(
     const command = `"${binary}\\${commands.psql}" -U ${user} --host ${host} --port ${port} -c "\\l"`
 
     // Execute the psql command
-    exec(command, { env: { PGPASSWORD: password } }, (error, stdout, stderr) => {
+    exec(command, { env: { PGPASSWORD: password }}, (error, stdout, stderr) => {
       if (error) {
         console.error(`Error: ${error.message}`)
         reject(error.message)

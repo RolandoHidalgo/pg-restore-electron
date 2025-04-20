@@ -35,6 +35,7 @@ import { CalendarIcon, Info } from 'lucide-vue-next'
 import useBackupInfo from '@renderer/composables/useBackupInfo'
 import useRestoreOnInitApi from '@renderer/composables/useRestoreOnInitApi'
 import useRestoreCloneApi from '@renderer/composables/useRestoreCloneApi'
+import { useConexionStore } from '@renderer/stores/conexionStore'
 
 const store = useAppStore()
 const isConsoleOpen = ref(false)
@@ -129,7 +130,12 @@ function test(){
   resetForm()
   //setFieldValue('backupPath',undefined)
 }
-
+function handleDone(){
+  isRestoring.value = false
+  if (isRestoreClone.value||newDb.value) {
+    useConexionStore().loadDbs()
+  }
+}
 </script>
 
 <template>
@@ -228,11 +234,11 @@ function test(){
             </FormField>
           </div>
         </CardContent>
-        <RestoreConsole v-else @done="isRestoring = false" />
+        <RestoreConsole v-else @done="handleDone" finish-event="finish-restore-ok"/>
       </form>
 
       <SheetFooter class="pt-0">
-        <Button @click="onSubmit" :disabled="isRestoring"> Aceptar</Button>
+        <Button @click="onSubmit" :disabled="isRestoring || isConsoleOpen"> Aceptar</Button>
       </SheetFooter>
     </SheetContent>
   </Sheet>

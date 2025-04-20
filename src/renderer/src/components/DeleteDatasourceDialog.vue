@@ -49,7 +49,7 @@ watchEffect(() => {
     <SheetTrigger></SheetTrigger>
     <SheetContent side="bottom" class="rounded-t-lg">
       <SheetHeader>
-        <SheetTitle>Adicionar datasource</SheetTitle>
+        <SheetTitle>Eliminar datasource</SheetTitle>
         <SheetDescription> Parámetros de conexión.</SheetDescription>
       </SheetHeader>
       <form class="grid gap-4 px-4">

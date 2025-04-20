@@ -1,12 +1,12 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { DataSource, getDatasources } from '../main/utils/restore/dataSourceUtils'
+import { DataSource, DatasourceInfo, getDatasourcesInfo } from '../main/utils/restore/dataSourceUtils'
 import { DbOptions } from '../main/utils/restore/restore-db'
 import path from 'path'
 
 const api = {
   restoreDb: (dbOptions: DbOptions) => {
-    const ds: DataSource | undefined = getDatasources().filter(
+    const ds: DataSource | undefined = getDatasourcesInfo().datasources.filter(
       (e) => e.name === dbOptions.dsName
     )[0]
 
@@ -21,7 +21,7 @@ const api = {
   sincronizarUsb: (usbDrive: string) => ipcRenderer.send('sincronizar-usb', usbDrive),
   backupDb: (dbOptions: DbOptions) => {
 
-    const ds: DataSource | undefined = getDatasources().filter(
+    const ds: DataSource | undefined = getDatasourcesInfo().datasources.filter(
       (e) => e.name === dbOptions.dsName
     )[0]
 
@@ -40,8 +40,7 @@ const api = {
       password: ds.password,
       port: Number(ds.port),
       host: ds.host,
-      username: ds.username,
-      isDefault: ds.isDefault ?? false
+      username: ds.username
     }
 
     return ipcRenderer.invoke('add-datasource', data)
@@ -69,7 +68,7 @@ const api = {
     return await ipcRenderer.invoke('obtener-version')
   },
   createDb: (dbOptions: DbOptions, createDbOptions) => {
-    const ds: DataSource | undefined = getDatasources().filter(
+    const ds: DataSource | undefined = getDatasourcesInfo().datasources.filter(
       (e) => e.name === dbOptions.dsName
     )[0]
 
@@ -82,7 +81,7 @@ const api = {
     return ipcRenderer.send('create-db', dbOptions, createDbOptions)
   },
   cloneDb: (dbOptions: DbOptions, createDbOptions) => {
-    const ds: DataSource | undefined = getDatasources().filter(
+    const ds: DataSource | undefined = getDatasourcesInfo().datasources.filter(
       (e) => e.name === dbOptions.dsName
     )[0]
 
@@ -102,7 +101,7 @@ const api = {
   handleUpdateInfo: (callback) => ipcRenderer.on('update-logs', callback),
   getBinaries: () => ipcRenderer.invoke('get-binaries'),
   getDrives: () => ipcRenderer.invoke('get-drives'),
-  getDatasource: (): Promise<DataSource[]> => ipcRenderer.invoke('get-datasource'),
+  getDatasourcesInfo: (): Promise<DatasourceInfo> => ipcRenderer.invoke('get-datasources-info'),
   deleteDatasource: (dsName:string): Promise<void> => ipcRenderer.invoke('delete-datasource',dsName),
   getDbs: async (name: string) => {
 

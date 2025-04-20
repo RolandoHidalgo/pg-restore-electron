@@ -22,9 +22,9 @@ import log from 'electron-log'
 import { autoUpdater } from 'electron-updater'
 import {
   addDatasources,
-  DataSource,
+  DataSource, DatasourceInfo,
   deleteDatasource,
-  getDatasources,
+  getDatasourcesInfo,
   setDafaultDatasource
 } from './utils/restore/dataSourceUtils'
 import { getUSBDrives } from './utils/restore/drivesUtils'
@@ -212,9 +212,9 @@ app.whenReady().then(() => {
 
   })
 
-  ipcMain.handle('get-datasource', (): DataSource[] => {
+  ipcMain.handle('get-datasources-info', (): DatasourceInfo => {
 
-    return getDatasources()
+    return getDatasourcesInfo()
 
 
   })
