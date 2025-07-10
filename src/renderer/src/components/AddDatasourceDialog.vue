@@ -179,7 +179,7 @@ store.$onAction(({ name, after }) => {
               <FormItem>
                 <FormLabel>Port</FormLabel>
                 <FormControl>
-                  <Input type="text" v-bind="componentField" />
+                  <Input type="number" v-bind="componentField" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
