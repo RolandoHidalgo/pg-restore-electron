@@ -23,7 +23,6 @@
     "build:win": "npm run build && electron-builder --win --config",
     "build:mac": "npm run build && electron-builder --mac --config",
     "build:linux": "npm run build && electron-builder --linux --config"
-
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -52,6 +51,8 @@
     "radix-vue": "^1.9.6",
     "rc9": "^2.1.2",
     "reka-ui": "^2.2.0",
+    "ssh2": "^1.17.0",
+    "ssh2-sftp-client": "^12.0.1",
     "tailwind-merge": "^3.1.0",
     "tailwindcss-animate": "^1.0.7",
     "usb": "^2.15.0",

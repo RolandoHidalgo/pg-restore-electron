@@ -9,6 +9,11 @@ export type DataSource = {
   port: number
   binary: string
   password: string
+  sshHost?: string
+  sshPort?: number
+  sshPassword?: string
+  sshUsername?: string
+  isSSH?: boolean
 }
 export type DatasourceInfo = { datasources: DataSource[], defaultDs: string }
 

@@ -1,6 +1,10 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { DataSource, DatasourceInfo, getDatasourcesInfo } from '../main/utils/restore/dataSourceUtils'
+import {
+  DataSource,
+  DatasourceInfo,
+  getDatasourcesInfo
+} from '../main/utils/restore/dataSourceUtils'
 import { DbOptions } from '../main/utils/restore/restore-db'
 import path from 'path'
 
@@ -20,7 +24,6 @@ const api = {
   },
   sincronizarUsb: (usbDrive: string) => ipcRenderer.send('sincronizar-usb', usbDrive),
   backupDb: (dbOptions: DbOptions) => {
-
     const ds: DataSource | undefined = getDatasourcesInfo().datasources.filter(
       (e) => e.name === dbOptions.dsName
     )[0]
@@ -34,25 +37,35 @@ const api = {
     ipcRenderer.send('backup-db', dbOptions)
   },
   addDatasource: async (ds: DataSource) => {
-    const data: DataSource = {
+    const baseData: DataSource = {
       name: ds.name,
-      binary: ds.binary,
+      binary: ds.binary ?? '',
       password: ds.password,
       port: Number(ds.port),
       host: ds.host,
-      username: ds.username
+      username: ds.username,
+      isSSH: ds.isSSH
     }
-
+    const data: DataSource = ds.isSSH
+      ? {
+          ...baseData,
+          sshPort: Number(ds.sshPort),
+          sshUsername: ds.sshUsername,
+          sshPassword: ds.sshPassword,
+          sshHost: ds.sshHost
+        }
+      : baseData
+    //console.log(data, 'la data')
     return ipcRenderer.invoke('add-datasource', data)
   },
   parseBackup: async (dsName: string, backupPath: File | string) => {
-    let path: File | string;
+    let path: File | string
     if (typeof backupPath === 'string') {
       path = backupPath
     } else {
       path = webUtils.getPathForFile(backupPath)
     }
-    return  ipcRenderer.invoke('parse-backup', dsName, path)
+    return ipcRenderer.invoke('parse-backup', dsName, path)
   },
   setDefaultDatasource: async (dsName: string) => {
     return ipcRenderer.invoke('set-default-ds', dsName)
@@ -77,7 +90,7 @@ const api = {
     dbOptions.host = ds?.host
     dbOptions.binary = ds?.binary
     dbOptions.port = ds?.port
-
+    dbOptions.dsName = ds?.name
     return ipcRenderer.send('create-db', dbOptions, createDbOptions)
   },
   cloneDb: (dbOptions: DbOptions, createDbOptions) => {
@@ -102,9 +115,9 @@ const api = {
   getBinaries: () => ipcRenderer.invoke('get-binaries'),
   getDrives: () => ipcRenderer.invoke('get-drives'),
   getDatasourcesInfo: (): Promise<DatasourceInfo> => ipcRenderer.invoke('get-datasources-info'),
-  deleteDatasource: (dsName:string): Promise<void> => ipcRenderer.invoke('delete-datasource',dsName),
+  deleteDatasource: (dsName: string): Promise<void> =>
+    ipcRenderer.invoke('delete-datasource', dsName),
   getDbs: async (name: string) => {
-
     return ipcRenderer.invoke('get-dbs', name)
   },
   getSchemmas: async (dsName: string, dbName: string) => {
